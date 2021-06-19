@@ -1,0 +1,152 @@
+#controls {
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+#controls button {
+    margin: 5px 1px;
+    padding: 8px 10px;
+    background-color: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.125);
+}
+
+.fa-facebook-square {
+    color: #3b5998
+}
+
+.fa-twitter {
+    color: #00aced
+}
+
+#solution-id-div {
+    width: 80px;
+}
+
+#solution-id {
+    text-align: right;
+    padding-right: 10px;
+    padding-left: 0;
+    background-color: white;
+}
+
+#quote-link {
+    top: 7px;
+}
+
+#solution-row {
+    height: 80vh;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+#solution-col {
+    height: 100%;
+}
+
+#quote-end {
+    display: none;
+}
+
+#solution {
+    font-family: "Courier New", Courier, monospace;
+    letter-spacing: 5px;
+    padding: 0 5px;
+    font-size: 150%;
+    user-select: none;
+    text-align: center;
+}
+
+#solution:focus {
+    outline: 0px solid transparent;
+}
+
+#solution span {
+    font-size: 150%;
+}
+
+#solution-card {
+    height: 100%;
+}
+
+#solution-card .card-body .row {
+    height: 100%;
+}
+
+.underscores {
+    cursor: pointer;
+}
+
+#about-dialog .modal-body {
+    text-align: left;
+}
+
+#quote-dialog .modal-body {
+    text-align: left;
+}
+
+#quote-dialog #alert-label span {
+    display: block;
+    text-align: left;
+}
+
+span.label {
+    white-space: normal;
+    display: block;
+    text-align: left;
+}
+
+.endQuote {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 35px;
+}
+
+#quote-end .endAuthor {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 30px;
+}
+
+.modal-body input {
+    margin-bottom: 5px;
+}
+
+#google-login {
+    position: relative;
+    height: 50px;
+    width: 210px;
+    background-image: url("../images/googleButton.png");
+    background-size: cover;
+}
+
+#google-login:hover {
+    background-image: url("../images/googleButtonPressed.png");
+}
+
+@media (max-width: 768px) {
+    #controls {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+
+    .endQuote {
+        font-size: 50px;
+    }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
+}
+
+
+/* DONATE QUOTE DIALOG */
+#quote-author {
+    margin-top: 10px;
+}
