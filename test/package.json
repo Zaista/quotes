@@ -1,6 +1,5 @@
 {
   "name": "cypress-tests",
-  "projectId": "quotes",
   "version": "1.0.0",
   "description": "Cypress tests",
   "main": "support/index.js",
