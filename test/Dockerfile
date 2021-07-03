@@ -6,4 +6,4 @@ COPY ./package.json .
 
 RUN ["npm", "install"]
 
-CMD ["npm", "run", "parallel"]
+ENTRYPOINT ["npm", "run", "parallel"]
