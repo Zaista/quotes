@@ -19,9 +19,5 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "cypress": "^7.6.0",
-    "cy2": "^1.2.1"
   }
 }
