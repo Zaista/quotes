@@ -1,7 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'deploy'
-  waitFor: ['-']
   args: ['-H', 'Authorization: Bearer $$TOKEN', '-data', '<build><buildType id="quotes_cypress"/></build>', '-X', 'POST', 'http://teamcity.jovanilic.com/app/rest/buildQueue']
   secretEnv: ['TOKEN']
 steps:
