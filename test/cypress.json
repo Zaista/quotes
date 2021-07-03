@@ -1,4 +1,5 @@
 {
     "projectId": "quotes",
-    "baseUrl": "https://quotes-dot-deductive-span-313911.ey.r.appspot.com/"
+    "baseUrl": "https://quotes-dot-deductive-span-313911.ey.r.appspot.com/",
+    "reporter": "mocha-teamcity-reporter"
 }

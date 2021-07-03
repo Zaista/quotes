@@ -9,7 +9,8 @@
   "author": "Zaista",
   "license": "MIT",
   "devDependencies": {
+    "cy2": "^1.2.1",
     "cypress": "^7.6.0",
-    "cy2": "^1.2.1"
+    "mocha-teamcity-reporter": "^4.1.0"
   }
 }
