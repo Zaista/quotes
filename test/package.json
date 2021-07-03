@@ -5,7 +5,7 @@
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {
-    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID`"
+    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID"
   },
   "author": "Zaista",
   "license": "MIT",
