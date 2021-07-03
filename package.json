@@ -1,11 +1,12 @@
 {
-  "name": "backend",
+  "name": "quotes",
   "version": "1.0.0",
-  "description": "Backend for quotes app",
+  "description": "Game of Quotes source code",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "cypress run"
+    "test": "cypress run",
+    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID`"
   },
   "author": "Zaista",
   "license": "MIT",
@@ -20,6 +21,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "cypress": "^7.6.0"
+    "cypress": "^7.6.0",
+    "cy2": "^1.2.1"
   }
 }
