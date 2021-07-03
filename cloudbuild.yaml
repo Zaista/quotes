@@ -1,4 +1,15 @@
 steps:
-- name: "gcr.io/cloud-builders/gcloud"
-  args: ["app", "deploy"]
-timeout: "1600s"
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: 'deploy'
+  waitFor: ['-']
+  args: ['-H', 'Authorization: Bearer $$TOKEN', '-data', '<build><buildType id="quotes_cypress"/></build>', '-X', 'POST', 'http://teamcity.jovanilic.com/app/rest/buildQueue']
+  secretEnv: ['TOKEN']
+steps:
+- name: 'gcr.io/cloud-builders/curl'
+  args: ['app', 'deploy']
+  waitFor: ['deploy']
+availableSecrets:
+  secretManager:
+  - versionName: projects/307352298506/secrets/teamcity-token/versions/1
+    env: 'TOKEN'
+timeout: 1600s
