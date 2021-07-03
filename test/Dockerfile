@@ -4,4 +4,6 @@ COPY ./cypress ./cypress
 COPY ./cypress.json .
 COPY ./package.json .
 
-RUN ["npm", "run", "parallel"]
+RUN ["npm", "install"]
+
+CMD ["npm", "run", "parallel"]
