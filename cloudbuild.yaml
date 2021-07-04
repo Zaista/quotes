@@ -3,7 +3,7 @@ steps:
   id: 'deploy'
   args: ['app', 'deploy']
 - name: 'gcr.io/cloud-builders/curl'
-  args: ['http://teamcity.jovanilic.com/app/rest/buildQueue', '-H', 'Authorization: Bearer $$TOKEN', '-H', 'Content-Type:application/xml', '-d', '<build><buildType id="quotes_cypress"/></build>', '-X', 'POST']
+  args: ['http://teamcity.jovanilic.com/app/rest/buildQueue', '-H', 'Authorization: Bearer eyJ0eXAiOiAiVENWMiJ9.MHM4NEI2Nms5MVJqekg2MXVUSDRtdzJsZ1Z3.M2I5Njc2ZWItMjI5Yi00NGM0LWI2OGQtOThkZTI4ODFmZjBj', '-H', 'Content-Type:application/xml', '-d', '<build><buildType id="quotes_cypress"/></build>', '-X', 'POST']
   secretEnv: ['TOKEN']
   waitFor: ['deploy']
 availableSecrets:
