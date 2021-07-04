@@ -8,6 +8,6 @@ steps:
   waitFor: ['deploy']
 availableSecrets:
   secretManager:
-  - versionName: projects/307352298506/secrets/teamcity-token/versions/1
+  - versionName: projects/307352298506/secrets/teamcity-token/versions/latest
     env: 'TOKEN'
 timeout: 1600s
