@@ -166,23 +166,18 @@ createAndAccessSecret().then(() => {
       pipeline = [
         {
           '$project': {
-            '_id': 0,
-            'quote': {
-              '$filter': {
-                'input': '$timeline',
-                'as': 'item',
-                'cond': { '$eq': ['$$item.mark', 'quote'] }
-              }
-            }
+            'quote': '$uploaded',
+            '_id': 0
           }
-        },
-        { '$unwind': { 'path': '$quote' } },
-        { '$sample': { 'size': 1 } }
+        }, {
+          '$unwind':  '$quote'
+        }
       ];
-      if (req.user) {
-        own_quotes = { '$match': { '_id': { '$ne': req.user._id } } };
-        pipeline.unshift(own_quotes);
-      }
+      // TODO unmatch solved quotes
+      // if (req.user) {
+      //   own_quotes = { '$match': { '_id': { '$ne': req.user._id } } };
+      //   pipeline.unshift(own_quotes);
+      // }
       error_message = 'Empty result returned from MongoDB.';
     }
 
@@ -193,7 +188,7 @@ createAndAccessSecret().then(() => {
       res.send({ error: error_message });
     }
 
-    console.log('Requested quote id: ' + quote.link);
+    console.log('Requested quote id: ' + quote.quote.link);
     res.send(quote);
   });
 

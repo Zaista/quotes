@@ -69,8 +69,8 @@ function getQuote(url) {
 
             } else {
 
-                quote = result.quote.content;
-                author = result.quote.addition;
+                quote = result.quote.quote;
+                author = result.quote.author;
 
                 $("#copy-clipboard").prop("disabled", false);
 
