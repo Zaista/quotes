@@ -1,6 +1,5 @@
 {
     "projectId": "quotes",
     "baseUrl": "https://quotes-dot-deductive-span-313911.ey.r.appspot.com/",
-    "reporter": "mocha-teamcity-reporter",
-    "videoCompression": 51
+    "reporter": "mocha-teamcity-reporter"
 }
