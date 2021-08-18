@@ -4,13 +4,17 @@
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {
-    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID"
+    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID",
+    "open": "cypress open",
+    "run": "cypress run"
   },
   "author": "Zaista",
   "license": "MIT",
   "devDependencies": {
     "cy2": "^1.2.1",
-    "cypress": "^7.6.0",
     "mocha-teamcity-reporter": "^4.1.0"
+  },
+  "dependencies": {
+    "cypress": "^8.3.0"
   }
 }
