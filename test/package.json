@@ -11,10 +11,9 @@
   "author": "Zaista",
   "license": "MIT",
   "devDependencies": {
+    "cypress": "^8.3.0",
     "cy2": "^1.2.1",
+    "mocha": "^9.0.3",
     "mocha-teamcity-reporter": "^4.1.0"
-  },
-  "dependencies": {
-    "cypress": "^8.3.0"
   }
 }
