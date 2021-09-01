@@ -1,12 +1,10 @@
 {
   "name": "quotes",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Game of Quotes source code",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "cypress run",
-    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID`"
+    "start": "node index.js"
   },
   "author": "Zaista",
   "license": "MIT",

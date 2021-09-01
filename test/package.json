@@ -1,10 +1,10 @@
 {
   "name": "cypress-tests",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {
-    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id 1.0.1",
+    "parallel": "cy2 run --record --key XXX --parallel --ci-build-id 1.0.2",
     "open": "cypress open",
     "run": "cypress run"
   },
