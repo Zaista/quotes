@@ -4,11 +4,11 @@ steps:
   args: ['app', 'deploy']
 - name: 'gcr.io/cloud-builders/curl'
   entrypoint: 'bash'
-  args: ['-c', 'curl http://teamcity.jovanilic.com/app/rest/buildQueue -H "Authorization: Bearer $$TOKEN" -H "Content-Type:application/xml" -d "<build><buildType id=\"quotes_cypress\"/></build>" -X POST']
+  args: ['-c', 'curl https://cloudbuild.googleapis.com/v1/projects/deductive-span-313911/triggers/cypress-tests:webhook?key=$$TOKEN -X POST']
   secretEnv: ['TOKEN']
   waitFor: ['deploy']
 availableSecrets:
   secretManager:
-  - versionName: projects/307352298506/secrets/teamcity-token/versions/latest
+  - versionName: projects/307352298506/secrets/cypress-tests/versions/latest
     env: 'TOKEN'
 timeout: 1600s
