@@ -1,6 +1,6 @@
 FROM cypress/included:8.3.0
 
-COPY .git .git
+COPY ../.git .git
 COPY cypress cypress
 COPY cypress.json .
 COPY package.json .
