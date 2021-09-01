@@ -6,6 +6,6 @@ COPY ./package.json .
 
 ENV CYPRESS_API_URL=https://cypress-director-gp34ticnkq-ey.a.run.app
 
-RUN ["npm", "install"]
+RUN ["npm", "ci"]
 
-RUN ["npm", "run", "parallel"]
+RUN ["npm", "run", "ci"]
