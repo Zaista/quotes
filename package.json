@@ -2,6 +2,7 @@
   "name": "quotes",
   "version": "1.0.4",
   "description": "Game of Quotes source code",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -9,7 +10,7 @@
   "author": "Zaista",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/secret-manager": "^3.7.1",
+    "@google-cloud/firestore": "^4.15.1",
     "cookie-session": "^1.4.0",
     "dateformat": "^4.5.1",
     "express": "^4.17.1",
