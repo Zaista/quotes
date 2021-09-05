@@ -3,11 +3,14 @@ import pipeline from './commons/pipeline.js';
 import db from './commons/db.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
-import GoogleStrategy from 'passport-google-oauth20';
-import cookieSession from "cookie-session";
+// import GoogleStrategy from 'passport-google-oauth20';
+// import cookieSession from 'cookie-session';
+// import session from 'express-session';
+import Strategy from 'passport-local';
 import { v4 as uuidv4 } from 'uuid';
 import Firestore from '@google-cloud/firestore';
 import mongodb from 'mongodb';
+import cookieParser from 'cookie-parser';
 
 // setup node express
 const app = express();
@@ -39,49 +42,69 @@ setupEnv().then(() => {
   // setup mongodb
   const { MongoClient } = mongodb;
   const client = new MongoClient(mongodb_uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
   });
 
   // setup passport
-  passport.use(new GoogleStrategy({
-    clientID: google_client_id,
-    clientSecret: google_client_secret,
-    callbackURL: '/auth/google/callback'
-  }, async (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails[0].value;
-    const username = profile.displayName;
-    let pipeline = [{ $match: { 'email': email } }, { $project: { 'username': 1, 'email': 1 } }];
+  // passport.use(new GoogleStrategy({
+  //   clientID: google_client_id,
+  //   clientSecret: google_client_secret,
+  //   callbackURL: '/auth/google/callback'
+  // }, async (accessToken, refreshToken, profile, done) => {
+  //   console.log('here');
+  //   const email = profile.emails[0].value;
+  //   const username = profile.displayName;
+  //   let pipeline = [{ $match: { 'email': email } }, { $project: { 'username': 1, 'email': 1 } }];
+  //   const user = await db.aggregate(client, pipeline);
+  //   if (user) {
+  //     console.log('User already known: ' + user.email);
+  //     done(null, user);
+  //   } else {
+  //     pipeline = [{ $sort: { _id: -1 } }, { $project: { 'username': 1, 'email': 1 } }, { $limit: 1 }];
+  //     const id_result = await db.aggregate(client, pipeline);
+  //     const next_id = id_result._id + 1;
+  //     const new_user = { _id: next_id, 'username': username, 'email': email };
+  //     const new_id = await insert(client, new_user);
+  //     console.log('New user created: ' + new_user.email + ' with id: ' + new_id);
+  //     done(null, new_user);
+  //   }
+  // }));
+
+  passport.use(new Strategy(function (username, password, done) {
+    console.log('here2');
+    let pipeline = [{ $match: { 'username': username, 'password': password } }, { $project: { 'username': 1, 'email': 1 } }];
     const user = await db.aggregate(client, pipeline);
+    // const user = { _id: 2, username: 'joca', email: 'ilicjovan89@gmail.com' };
     if (user) {
-      console.log('User already known: ' + user.email);
-      done(null, user);
+      return done(null, user);
     } else {
-      pipeline = [{ $sort: { _id: -1 } }, { $project: { 'username': 1, 'email': 1 } }, { $limit: 1 }];
-      const id_result = await db.aggregate(client, pipeline);
-      const next_id = id_result._id + 1;
-      const new_user = { _id: next_id, 'username': username, 'email': email };
-      const new_id = await insert(client, new_user);
-      console.log('New user created: ' + new_user.email + ' with id: ' + new_id);
-      done(null, new_user);
+      return done(null, false, { message: 'Not uspeo.' });
     }
-  }));
+  }
+  ));
 
   passport.serializeUser((user, done) => {
+    console.log('seri')
     done(null, user._id);
   });
 
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser((id, done) => {
+    console.log('deseri')
     let pipeline = [{ $match: { '_id': id } }, { $project: { 'username': 1, 'email': 1 } }];
-    const user = await db.aggregate(client, pipeline);
+    const user = db.aggregate(client, pipeline);
     done(null, user);
   });
 
-  app.use(cookieSession({
-    // milliseconds of a day
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: session_key
-  }));
+  // app.use(cookieParser);
+
+  // app.use(cookieSession({
+  //   // milliseconds of a day
+  //   maxAge: 24 * 60 * 60 * 1000,
+  //   keys: session_key
+  // }));
+
+  // app.use(session({ secret: session_key, resave: false, saveUninitialized: false, cookie: { maxAge: 60 * 60 * 24 * 1000, secure: false } }));
 
   app.use(passport.initialize());
   app.use(passport.session());
@@ -94,6 +117,7 @@ setupEnv().then(() => {
   });
 
   app.get('/', (req, res) => {
+    console.log('User: ' + req.user)
     res.sendFile('public/quotes.html', { root: '.' });
   });
 
@@ -138,8 +162,10 @@ setupEnv().then(() => {
 
   app.get('/api/status', (req, res) => {
     if (req.user) {
+      console.log('Session esablished')
       res.send(req.user);
     } else {
+      console.log('No session')
       res.send({ error: 'unauthorized' });
     }
   });
@@ -151,8 +177,18 @@ setupEnv().then(() => {
     res.redirect('/');
   });
 
-  app.post('/api/login', function (req, res) {
-    res.send({ error: 'not implemented' });
+  app.post('/api/login', passport.authenticate('local'), function (req, res) {
+      // console.log(err);
+      console.log(req.user);
+      // if (err) { return next(err); }
+      if (!req.user) { return res.redirect('/login'); }
+      res.send({ 'login': 'success' });
+      // req.login(user, next);
+    // req.login(req.user, function (err) { // <-- Log user in
+    //   console.log(err)
+    //   console.log('User \'' + req.user.email + '\' logged in.');
+    //   return res.send({ 'login': 'success' });
+    // });
   });
 
   app.get('/api/logout', async (req, res) => {

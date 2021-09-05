@@ -71,18 +71,18 @@ function getQuote(url) {
 
                 quote = result.quote.quote;
                 author = result.quote.author;
+                quoteId = result.quote.link;
 
                 $("#copy-clipboard").prop("disabled", false);
 
-                $("#facebook-link").attr("href", facebookURL + "?quote=" + result._id);
+                $("#facebook-link").attr("href", facebookURL + "?quote=" + quoteId);
                 $("#facebook-link button").prop("disabled", false);
 
-                $("#twitter-link").attr("href", twitterURL + "?quote=" + result._id);
+                $("#twitter-link").attr("href", twitterURL + "?quote=" + quoteId);
                 $("#twitter-link button").prop("disabled", false);
 
                 // set link to right hand input
-                $('#solution-id').val(result._id);
-                quoteId = result._id;
+                $('#solution-id').val(quoteId);
 
                 // Replace all double quotes and single quotes respectively
                 quote = quote.replace(/&quot;/g, '"').replace(/&#39;/g, '\'');
@@ -353,9 +353,9 @@ $(document).ready(function () {
 
             var postData = $("#login-username, #login-password").serialize();
 
-            $.post(login_endpoint, postData, function (data, status) {
-                if (status == "success" && data == "User successfully logged in") {
-                    location.href = "quotes.html?quote=" + quoteId;
+            $.post(login_endpoint, postData, function (data) {
+                if (data.login) {
+                    location.href = "?quote=" + quoteId;
                 }
                 else {
                     showAlert("login", "danger", data);
