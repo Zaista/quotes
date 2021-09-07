@@ -20,10 +20,10 @@ async function insert(client, document) {
     }
 }
 
-async function update(client, user, quote) {
+async function update(client, query, pipeline) {
     try {
         await client.connect();
-        const query_result = await client.db('quotes').collection('users').update({ '_id': user }, { $push: { 'timeline': quote } });
+        const query_result = await client.db('quotes').collection('users').update(query, pipeline);
         return query_result.result.nModified;
     } catch (err) {
         console.log('ERROR: ' + err.stack);

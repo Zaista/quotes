@@ -23,7 +23,7 @@ var quote,
     userRegisterURL = "api/user_register.php",
     userRecoverURL = "api/user_recover.php",
     submit_endpoint = "api/submit",
-    quoteSolutionURL = "api/quote_solution.php",
+    solution_endpoint = "api/solution",
     facebookURL = "https://www.facebook.com/sharer/sharer.php?u=https://quotes.jovanilic.com/quotes.html",
     twitterURL = "https://twitter.com/intent/tweet?url=https://quotes.jovanilic.com/quotes.html";
 
@@ -531,13 +531,16 @@ function checkEnd(id) {
         var alertMessage;
 
         // mark the completion in database
-        $.get(quoteSolutionURL + "?quote=" + quoteId, function (data, status) {
-            if (status == "success" && data == "User soulution confirmed") {
-                alertMessage = "Congratulations! Quote added to your timeline.";
-            } else if (status == "success" && data == "Quote already solved") {
-                alertMessage = "Congratulations! You solved the quote.";
+        $.get(solution_endpoint + "?quote=" + quoteId, function (response) {
+            if(response.success) {
+                alertMessage = response.success;
+            // if (response == "success" && data == "User soulution confirmed") {
+            //     alertMessage = "Congratulations! Quote added to your timeline.";
+            // } else if (status == "success" && data == "Quote already solved") {
+            //     alertMessage = "Congratulations! You solved the quote.";
             } else {
-                alertMessage = "Congratulations! Login to track what quotes you solved, view your stats and much more!";
+                // alertMessage = "Congratulations! Login to track what quotes you solved, view your stats and much more!";
+                alertMessage = 'Something went wrong.'
             }
         });
 

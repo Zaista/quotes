@@ -1,15 +1,13 @@
 import db from './db.js';
 
-function getQuote(client, req) {
+function get_quote(client, user_id, quote_link) {
     let pipeline;
-    let error_message;
 
-    if (req.query.quote) {
-        // TODO fix quote links
+    if (quote_link) {
         pipeline = [
             {
                 '$match': {
-                    'uploaded.link': req.query.quote
+                    'uploaded.link': quote_link
                 }
             }, {
                 '$project': {
@@ -20,7 +18,7 @@ function getQuote(client, req) {
                             'as': 'quote',
                             'cond': {
                                 '$eq': [
-                                    '$$quote.link', req.query.quote
+                                    '$$quote.link', quote_link
                                 ]
                             }
                         }
@@ -32,7 +30,6 @@ function getQuote(client, req) {
                 }
             }
         ];
-        error_message = 'No quote with this id.';
     } else {
         pipeline = [
             {
@@ -44,20 +41,21 @@ function getQuote(client, req) {
                 '$unwind': '$quote'
             }
         ];
-        // TODO unmatch solved quotes
-        // if (req.user) {
-        //   own_quotes = { '$match': { '_id': { '$ne': req.user._id } } };
-        //   pipeline.unshift(own_quotes);
-        // }
-        error_message = 'Empty result returned from MongoDB.';
+        if (user_id) {
+          let own_quotes = { '$match': { '_id': { '$ne': user_id } } };
+          pipeline.unshift(own_quotes);
+        }
+        // TODO filter out solved quotes
     }
 
     return db.aggregate(client, pipeline);
 }
 
-function getProfile(client, req) {
+function get_profile(client, user_id) {
+
+    // TODO no more timeline
     let pipeline = [
-        { $match: { '_id': req.user._id } },
+        { $match: { '_id': user_id } },
         {
             $project: {
                 username: 1, email: 1, timeline: 1,
@@ -68,4 +66,10 @@ function getProfile(client, req) {
     return db.aggregate(client, pipeline);
 }
 
-export default { getQuote, getProfile };
+function solve_quote(client, user_id, quote_link) {
+    const query = { '_id': user_id }
+    const pipeline = { $push: { 'solved': quote_link } };
+    return db.update(client, query, pipeline);
+}
+
+export default { get_quote, get_profile, solve_quote };

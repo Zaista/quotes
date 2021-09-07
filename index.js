@@ -5,7 +5,7 @@ import dateFormat from 'dateformat';
 import passport from 'passport';
 // import GoogleStrategy from 'passport-google-oauth20';
 // import cookieSession from 'cookie-session';
-// import session from 'express-session';
+import session from 'express-session';
 import Strategy from 'passport-local';
 import { v4 as uuidv4 } from 'uuid';
 import Firestore from '@google-cloud/firestore';
@@ -17,6 +17,7 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(cookieParser());
 
 // setup environment variables
 const firestore = new Firestore({
@@ -32,12 +33,17 @@ let setupEnv;
 
 if (process.env.NODE_ENV === 'dev') {
   setupEnv = setupEnvDev;
-}
-if (process.env.NODE_ENV === 'prod') {
+} else if (process.env.NODE_ENV === 'prod') {
   setupEnv = setupEnvProd;
+} else {
+  console.log('NODE_ENV variable not defined, stopping the app.')
+  process.exit(1);
 }
 
+
 setupEnv().then(() => {
+
+  app.use(session({ secret: session_key, resave: false, saveUninitialized: false }));
 
   // setup mongodb
   const { MongoClient } = mongodb;
@@ -71,28 +77,24 @@ setupEnv().then(() => {
   //   }
   // }));
 
-  passport.use(new Strategy(function (username, password, done) {
-    console.log('here2');
+  passport.use(new Strategy(async function (username, password, done) {
     let pipeline = [{ $match: { 'username': username, 'password': password } }, { $project: { 'username': 1, 'email': 1 } }];
     const user = await db.aggregate(client, pipeline);
-    // const user = { _id: 2, username: 'joca', email: 'ilicjovan89@gmail.com' };
     if (user) {
       return done(null, user);
     } else {
-      return done(null, false, { message: 'Not uspeo.' });
+      return done(null, false, { message: 'Something went wrong.' });
     }
   }
   ));
 
-  passport.serializeUser((user, done) => {
-    console.log('seri')
+  passport.serializeUser(function (user, done) {
     done(null, user._id);
   });
 
-  passport.deserializeUser((id, done) => {
-    console.log('deseri')
-    let pipeline = [{ $match: { '_id': id } }, { $project: { 'username': 1, 'email': 1 } }];
-    const user = db.aggregate(client, pipeline);
+  passport.deserializeUser(async function (_id, done) {
+    let pipeline = [{ $match: { '_id': _id } }, { $project: { 'username': 1, 'email': 1 } }];
+    const user = await db.aggregate(client, pipeline);
     done(null, user);
   });
 
@@ -117,17 +119,12 @@ setupEnv().then(() => {
   });
 
   app.get('/', (req, res) => {
-    console.log('User: ' + req.user)
     res.sendFile('public/quotes.html', { root: '.' });
-  });
-
-  app.get('/profile', (req, res) => {
-    res.sendFile('public/profile.html', { root: '.' });
   });
 
   app.get('/api/quote', async (req, res) => {
 
-    const quote = await pipeline.getQuote(client, req);
+    const quote = await pipeline.get_quote(client, req.user?._id, req.query.quote);
 
     if (quote == '') {
       console.log(error_message);
@@ -138,8 +135,21 @@ setupEnv().then(() => {
     res.send(quote);
   });
 
+  app.get('/api/solution', async (req, res) => {
+    if (!req.user) return res.status(401).send({ error: 'Not authorized.' })
+    const result = await pipeline.solve_quote(client, req.user._id, req.query.quote);
+    // TODO add check for valid quote_link
+    if (result) return res.send({ success: 'Quote solved.' });
+    else return res.send({ error: 'Something went wrong.' })
+  });
+
+  app.get('/profile', (req, res) => {
+    res.sendFile('public/profile.html', { root: '.' });
+  });
+
   app.get('/api/profile', async (req, res) => {
-    const result = await pipeline.getProfile(client, req);
+    if (!req.user) return res.send({ error: 'Not logged in.' })
+    const result = await pipeline.get_profile(client, req.user._id);
     res.send(result);
   });
 
@@ -178,17 +188,8 @@ setupEnv().then(() => {
   });
 
   app.post('/api/login', passport.authenticate('local'), function (req, res) {
-      // console.log(err);
-      console.log(req.user);
-      // if (err) { return next(err); }
-      if (!req.user) { return res.redirect('/login'); }
-      res.send({ 'login': 'success' });
-      // req.login(user, next);
-    // req.login(req.user, function (err) { // <-- Log user in
-    //   console.log(err)
-    //   console.log('User \'' + req.user.email + '\' logged in.');
-    //   return res.send({ 'login': 'success' });
-    // });
+    if (!req.user) { return res.redirect('/login'); }
+    res.send({ 'login': 'success' });
   });
 
   app.get('/api/logout', async (req, res) => {

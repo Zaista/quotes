@@ -13,6 +13,8 @@ $(function () {
 
     $.get(profile_endpoint, (response) => {
 
+        console.log(response)
+
         var last_year;
 
         if (!response.error) {
@@ -157,8 +159,8 @@ $(function () {
     });
 
     // this will remember (put in url) what tab was selected
-    $('.nav-tabs li').click(function () {
-        window.history.pushState('stateObject', 'Title', 'profile.html?' + $(this).find('a').text().trim().toLowerCase());
+    $('.nav-tabs li.tab').click(function () {
+        window.history.pushState('stateObject', 'Title', 'profile?' + $(this).find('a').text().trim().toLowerCase());
     });
 
     // this will open a tab is selection was remembered in url
