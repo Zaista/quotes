@@ -3,7 +3,7 @@ import pipeline from './commons/pipeline.js';
 import db from './commons/db.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
-// import GoogleStrategy from 'passport-google-oauth20';
+import GoogleStrategy from 'passport-google-oauth20';
 // import cookieSession from 'cookie-session';
 import session from 'express-session';
 import Strategy from 'passport-local';
@@ -54,29 +54,29 @@ setupEnv().then(() => {
   client.connect();
 
   // setup passport
-  // passport.use(new GoogleStrategy({
-  //   clientID: google_client_id,
-  //   clientSecret: google_client_secret,
-  //   callbackURL: '/auth/google/callback'
-  // }, async (accessToken, refreshToken, profile, done) => {
-  //   console.log('here');
-  //   const email = profile.emails[0].value;
-  //   const username = profile.displayName;
-  //   let pipeline = [{ $match: { 'email': email } }, { $project: { 'username': 1, 'email': 1 } }];
-  //   const user = await db.aggregate(client, pipeline);
-  //   if (user) {
-  //     console.log('User already known: ' + user.email);
-  //     done(null, user);
-  //   } else {
-  //     pipeline = [{ $sort: { _id: -1 } }, { $project: { 'username': 1, 'email': 1 } }, { $limit: 1 }];
-  //     const id_result = await db.aggregate(client, pipeline);
-  //     const next_id = id_result._id + 1;
-  //     const new_user = { _id: next_id, 'username': username, 'email': email };
-  //     const new_id = await insert(client, new_user);
-  //     console.log('New user created: ' + new_user.email + ' with id: ' + new_id);
-  //     done(null, new_user);
-  //   }
-  // }));
+  passport.use(new GoogleStrategy({
+    clientID: google_client_id,
+    clientSecret: google_client_secret,
+    callbackURL: '/auth/google/callback'
+  }, async (accessToken, refreshToken, profile, done) => {
+    console.log('here');
+    const email = profile.emails[0].value;
+    const username = profile.displayName;
+    let pipeline = [{ $match: { 'email': email } }, { $project: { 'username': 1, 'email': 1 } }];
+    const user = await db.aggregate(client, pipeline);
+    if (user) {
+      console.log('User already known: ' + user.email);
+      done(null, user);
+    } else {
+      pipeline = [{ $sort: { _id: -1 } }, { $project: { 'username': 1, 'email': 1 } }, { $limit: 1 }];
+      const id_result = await db.aggregate(client, pipeline);
+      const next_id = id_result._id + 1;
+      const new_user = { _id: next_id, 'username': username, 'email': email };
+      const new_id = await insert(client, new_user);
+      console.log('New user created: ' + new_user.email + ' with id: ' + new_id);
+      done(null, new_user);
+    }
+  }));
 
   passport.use(new Strategy(async function (username, password, done) {
     let pipeline = [{ $match: { 'username': username, 'password': password } }, { $project: { 'username': 1, 'email': 1 } }];
