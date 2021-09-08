@@ -1,2 +1,4 @@
 runtime: nodejs14
 service: quotes
+env_variables:
+  NODE_ENV: "prod"
