@@ -54,21 +54,21 @@ function get_quote(client, user_id, quote_link) {
 function get_profile(client, user_id) {
 
     // TODO no more timeline
-    let pipeline = [
-        { $match: { '_id': user_id } },
-        {
-            $project: {
-                username: 1, email: 1, timeline: 1,
-                solved: { $size: { $filter: { input: '$timeline', as: 'line', cond: { $eq: ['$$line.mark', 'quote'] } } } },
-                uploaded: { $size: { $filter: { input: '$timeline', as: 'line', cond: { $eq: ['$$line.mark', 'upload'] } } } }
-            }
-        }];
-    return db.aggregate(client, pipeline);
+    // let pipeline = [
+    //     { $match: { '_id': user_id } },
+    //     {
+    //         $project: {
+    //             username: 1, email: 1, timeline: 1,
+    //             solved: { $size: { $filter: { input: '$timeline', as: 'line', cond: { $eq: ['$$line.mark', 'quote'] } } } },
+    //             uploaded: { $size: { $filter: { input: '$timeline', as: 'line', cond: { $eq: ['$$line.mark', 'upload'] } } } }
+    //         }
+    //     }];
+    // return db.aggregate(client, pipeline);
 }
 
 function solve_quote(client, user_id, quote_link) {
     const query = { '_id': user_id }
-    const pipeline = { $push: { 'solved': quote_link } };
+    const pipeline = { $push: { 'solved': { 'date': new Date(Date.now()), 'link': quote_link} } };
     return db.update(client, query, pipeline);
 }
 

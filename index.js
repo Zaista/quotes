@@ -29,7 +29,6 @@ let mongodb_uri;
 let session_key;
 let google_client_id;
 let google_client_secret;
-let google_client_secret;
 let setupEnv;
 
 if (process.env.NODE_ENV === 'dev') {
@@ -52,6 +51,7 @@ setupEnv().then(() => {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
+  client.connect();
 
   // setup passport
   // passport.use(new GoogleStrategy({
