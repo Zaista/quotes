@@ -29,11 +29,12 @@ let mongodb_uri;
 let session_key;
 let google_client_id;
 let google_client_secret;
+let google_client_secret;
 let setupEnv;
 
 if (process.env.NODE_ENV === 'dev') {
   setupEnv = setupEnvDev;
-} else if (process.env.NODE_ENV === 'prod') {
+} else if (process.env.NODE_ENV === 'production') {
   setupEnv = setupEnvProd;
 } else {
   console.log('NODE_ENV variable not defined, stopping the app.')
