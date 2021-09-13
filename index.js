@@ -36,7 +36,8 @@ if (process.env.NODE_ENV === 'dev') {
 } else if (process.env.NODE_ENV === 'production') {
   setupEnv = setupEnvProd;
 } else {
-  console.log('NODE_ENV variable not defined, stopping the app.')
+  console.log(process.env.NODE_ENV);
+  console.log('NODE_ENV variable not defined, stopping the app.');
   process.exit(1);
 }
 
@@ -115,7 +116,7 @@ setupEnv().then(() => {
   // Listen to the App Engine-specified port, or 8080 otherwise
   const PORT = process.env.PORT || 8080;
   app.listen(PORT, () => {
-    console.log('Environment variable: ' + process.env.NODE_ENV)
+    console.log(`Environment variable: ${process.env.NODE_ENV}`);
     console.log(`Server app listening at http://localhost:${PORT}`);
   });
 
@@ -127,9 +128,8 @@ setupEnv().then(() => {
 
     const quote = await pipeline.get_quote(client, req.user?._id, req.query.quote);
 
-    if (quote == '') {
-      console.log(error_message);
-      res.send({ error: error_message });
+    if (quote == null) {
+      return res.send({ error: 'Database connection error.' });
     }
 
     console.log('Requested quote id: ' + quote.quote.link);
