@@ -21,8 +21,8 @@ app.use(cookieParser());
 
 // setup environment variables
 const firestore = new Firestore({
-  projectId: 'deductive-span-313911',
-  keyFilename: 'private/credentials.json',
+  projectId: 'deductive-span-313911'
+
 });
 
 let mongodb_uri;
