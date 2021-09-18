@@ -38,7 +38,7 @@ function get(client, user_id, quote_link) {
 
         pipeline.push(stage1, stage2, stage3);
     } else {
-        
+
         // project only quotes from the documents
         const stage1 = {
             '$project': {
@@ -59,7 +59,7 @@ function get(client, user_id, quote_link) {
             const stage0 = { '$match': { '_id': { '$ne': user_id } } };
             pipeline.unshift(stage0);
         }
-        
+
         // TODO filter out solved quotes
     }
 
@@ -68,8 +68,14 @@ function get(client, user_id, quote_link) {
 
 function solve(client, user_id, quote_link) {
     const query = { '_id': user_id }
-    const pipeline = { $push: { 'solved': { 'date': new Date(Date.now()), 'link': quote_link} } };
+    const pipeline = { $push: { 'solved': { 'date': new Date(Date.now()), 'link': quote_link } } };
     return db.update(client, query, pipeline);
 }
 
-export default { get, solve };
+function submit(client, user_id, quote) {
+    const query = { '_id': user_id }
+    const pipeline = { $push: { 'uploaded': quote } };
+    return db.update(client, query, pipeline);
+}
+
+export default { get, solve, submit };

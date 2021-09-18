@@ -2,11 +2,9 @@ import express from 'express';
 import quote_pipeline from './commons/quote_pipeline.js';
 import profile_pipeline from './commons/profile_pipeline.js';
 import user_pipeline from './commons/user_pipeline.js';
-import db from './commons/db.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
-// import cookieSession from 'cookie-session';
 import session from 'express-session';
 import Strategy from 'passport-local';
 import { v4 as uuidv4 } from 'uuid';
@@ -84,16 +82,6 @@ setupEnv().then(() => {
     done(null, user);
   });
 
-  // app.use(cookieParser);
-
-  // app.use(cookieSession({
-  //   // milliseconds of a day
-  //   maxAge: 24 * 60 * 60 * 1000,
-  //   keys: session_key
-  // }));
-
-  // app.use(session({ secret: session_key, resave: false, saveUninitialized: false, cookie: { maxAge: 60 * 60 * 24 * 1000, secure: false } }));
-
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -139,13 +127,13 @@ setupEnv().then(() => {
   });
 
   app.post('/api/submit', async (req, res) => {
-    var date_now = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
-    let quote = { 'insert_date': date_now, 'content': req.body.quote, 'addition': req.body.author, 'link': uuidv4(), 'mark': 'upload' };
-    let user_id = 1;
+    const date_now = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
+    const quote = { 'date': date_now, 'quote': req.body.quote, 'author': req.body.author, 'link': uuidv4() };
+    let user_id = null; // TODO check this path
     if (req.user) {
-      user_id = req.user._id;
+      user_id = new mongodb.ObjectId(req.user._id);
     }
-    const result = await db.update(client, user_id, quote);
+    const result = await quote_pipeline.submit(client, user_id, quote);
     if (result) {
       console.log('Quote submited');
       res.send({ 'result': 'success' });
