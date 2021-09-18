@@ -1,6 +1,6 @@
 {
   "name": "cypress-tests",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {
@@ -12,8 +12,6 @@
   "license": "MIT",
   "devDependencies": {
     "cypress": "8.3.0",
-    "cy2": "1.2.1",
-    "mocha": "9.0.3",
-    "mocha-teamcity-reporter": "4.1.0"
+    "cy2": "1.2.1"
   }
 }
