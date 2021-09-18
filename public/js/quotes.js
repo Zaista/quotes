@@ -24,6 +24,7 @@ var quote,
     userRecoverURL = "api/user_recover.php",
     submit_endpoint = "api/submit",
     solution_endpoint = "api/solution",
+    version_endpoint = "api/version",
     facebookURL = "https://www.facebook.com/sharer/sharer.php?u=https://quotes.jovanilic.com/quotes.html",
     twitterURL = "https://twitter.com/intent/tweet?url=https://quotes.jovanilic.com/quotes.html";
 
@@ -142,13 +143,11 @@ $(document).ready(function () {
         $("#user-register-dialog").modal('show');
     }
 
-    // when clicked on a clear button
     $('#clear-button').click(function () {
         removeAllLetters();
         $('#keyboard-focus').focus();
     });
 
-    // when clicked on a restart button
     $('#restart-button').click(function () {
         if (gameEnded) {
             var path = window.location.href;
@@ -158,6 +157,12 @@ $(document).ready(function () {
             spinner.appendTo("#solution");
             getQuote(quote_endpoint);
         }
+    });
+
+    $('#about-button').click(function () {
+        $.get(version_endpoint, (response) => {
+            $('#version').text(response.version);
+        });
     });
 
     // when clicked on a user-register link

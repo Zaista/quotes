@@ -191,6 +191,10 @@ setupEnv().then(() => {
     res.redirect('/');
     // TODO not working
   });
+
+  app.get('/api/version', (req, res) => {
+    res.send( { version: `${process.env.npm_package_version}`})
+  });
 });
 
 
