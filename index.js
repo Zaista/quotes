@@ -1,6 +1,7 @@
 import express from 'express';
 import quote_pipeline from './commons/quote_pipeline.js';
 import profile_pipeline from './commons/profile_pipeline.js';
+import user_pipeline from './commons/user_pipeline.js';
 import db from './commons/db.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
@@ -52,28 +53,20 @@ setupEnv().then(() => {
     clientSecret: google_client_secret,
     callbackURL: '/auth/google/callback'
   }, async (accessToken, refreshToken, profile, done) => {
-    console.log('here');
-    const email = profile.emails[0].value;
-    const username = profile.displayName;
-    let pipeline = [{ $match: { 'email': email } }, { $project: { 'username': 1, 'email': 1 } }];
-    const user = await db.aggregate(client, pipeline);
-    if (user) {
-      console.log('User already known: ' + user.email);
-      done(null, user);
+    const user = { email: profile.emails[0].value, username: profile.displayName }
+    const db_user = await user_pipeline.get(client, user);
+    if (db_user) {
+      console.log('User already known: ' + db_user.email);
+      done(null, db_user);
     } else {
-      pipeline = [{ $sort: { _id: -1 } }, { $project: { 'username': 1, 'email': 1 } }, { $limit: 1 }];
-      const id_result = await db.aggregate(client, pipeline);
-      const next_id = id_result._id + 1;
-      const new_user = { _id: next_id, 'username': username, 'email': email };
-      const new_id = await insert(client, new_user);
-      console.log('New user created: ' + new_user.email + ' with id: ' + new_id);
-      done(null, new_user);
+      const new_id = await user_pipeline.insert(client, user);
+      console.log('New user created: ' + user.email + ' with id: ' + new_id);
+      done(null, user);
     }
   }));
 
   passport.use(new Strategy(async function (username, password, done) {
-    let pipeline = [{ $match: { 'username': username, 'password': password } }, { $project: { 'username': 1, 'email': 1 } }];
-    const user = await db.aggregate(client, pipeline);
+    const user = await user_pipeline.get(client, { 'username': username, 'password': password });
     if (user) {
       return done(null, user);
     } else {
@@ -87,8 +80,7 @@ setupEnv().then(() => {
   });
 
   passport.deserializeUser(async function (_id, done) {
-    let pipeline = [{ $match: { '_id': _id } }, { $project: { 'username': 1, 'email': 1 } }];
-    const user = await db.aggregate(client, pipeline);
+    const user = await user_pipeline.get(client, { _id: new mongodb.ObjectId(_id) });
     done(null, user);
   });
 
@@ -189,11 +181,10 @@ setupEnv().then(() => {
     console.log('User \'' + req.user.email + '\' logged out.');
     req.logout();
     res.redirect('/');
-    // TODO not working
   });
 
   app.get('/api/version', (req, res) => {
-    res.send( { version: `${process.env.npm_package_version}`})
+    res.send({ version: `${process.env.npm_package_version}` })
   });
 });
 
