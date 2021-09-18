@@ -1,5 +1,6 @@
 import express from 'express';
-import pipeline from './commons/pipeline.js';
+import quote_pipeline from './commons/quote_pipeline.js';
+import profile_pipeline from './commons/profile_pipeline.js';
 import db from './commons/db.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
@@ -12,18 +13,11 @@ import Firestore from '@google-cloud/firestore';
 import mongodb from 'mongodb';
 import cookieParser from 'cookie-parser';
 
-// setup node express
 const app = express();
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
-
-// setup environment variables
-const firestore = new Firestore({
-  projectId: 'deductive-span-313911'
-
-});
 
 let mongodb_uri;
 let session_key;
@@ -46,7 +40,6 @@ setupEnv().then(() => {
 
   app.use(session({ secret: session_key, resave: false, saveUninitialized: false }));
 
-  // setup mongodb
   const { MongoClient } = mongodb;
   const client = new MongoClient(mongodb_uri, {
     useNewUrlParser: true,
@@ -54,7 +47,6 @@ setupEnv().then(() => {
   });
   client.connect();
 
-  // setup passport
   passport.use(new GoogleStrategy({
     clientID: google_client_id,
     clientSecret: google_client_secret,
@@ -126,7 +118,7 @@ setupEnv().then(() => {
 
   app.get('/api/quote', async (req, res) => {
 
-    const quote = await pipeline.get_quote(client, req.user?._id, req.query.quote);
+    const quote = await quote_pipeline.get(client, req.user?._id, req.query.quote);
 
     if (quote == null) {
       return res.send({ error: 'Database connection error.' });
@@ -138,7 +130,7 @@ setupEnv().then(() => {
 
   app.get('/api/solution', async (req, res) => {
     if (!req.user) return res.status(401).send({ error: 'Not authorized.' })
-    const result = await pipeline.solve_quote(client, req.user._id, req.query.quote);
+    const result = await quote_pipeline.solve(client, req.user._id, req.query.quote);
     // TODO add check for valid quote_link
     if (result) return res.send({ success: 'Quote solved.' });
     else return res.send({ error: 'Something went wrong.' })
@@ -150,7 +142,7 @@ setupEnv().then(() => {
 
   app.get('/api/profile', async (req, res) => {
     if (!req.user) return res.send({ error: 'Not logged in.' })
-    const result = await pipeline.get_profile(client, req.user._id);
+    const result = await profile_pipeline.get(client, req.user._id);
     res.send(result);
   });
 
@@ -203,6 +195,7 @@ setupEnv().then(() => {
 
 
 async function setupEnvProd() {
+  const firestore = new Firestore({ projectId: 'deductive-span-313911' });
   const env = await firestore.collection('data').doc('env').get();
   mongodb_uri = env.data().mongodb_uri;
   session_key = env.data().session_key;
