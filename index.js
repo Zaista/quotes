@@ -94,7 +94,7 @@ app.get('/api/quote', async (req, res) => {
     return res.send({ error: 'Database connection error.' });
   }
 
-  console.log('Requested quote id: ' + quote.quote.link);
+  console.log('Requested quote id: ' + quote.link);
   res.send(quote);
 });
 

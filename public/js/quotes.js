@@ -70,9 +70,9 @@ function getQuote(url) {
 
             } else {
 
-                quote = result.quote.quote;
-                author = result.quote.author;
-                quoteId = result.quote.link;
+                quote = result.quote;
+                author = result.author;
+                quoteId = result.link;
 
                 $("#copy-clipboard").prop("disabled", false);
 

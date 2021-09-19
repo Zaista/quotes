@@ -8,6 +8,16 @@ async function aggregate(client, pipeline) {
     }
 }
 
+async function aggregate_quotes(client, pipeline) {
+    try {
+        const query_result = await client.db('quotes').collection('all_quotes').aggregate(pipeline).toArray();
+        return query_result[0];
+    } catch (err) {
+        console.log('ERROR: ' + err.stack);
+        return null;
+    }
+}
+
 async function insert(client, document) {
     try {
         const query_result = await client.db('quotes').collection('users').insertOne(document);
@@ -28,4 +38,4 @@ async function update(client, query, pipeline) {
     }
 }
 
-export default { aggregate, insert, update };
+export default { aggregate, aggregate_quotes, insert, update };
