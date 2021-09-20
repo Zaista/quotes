@@ -19,25 +19,16 @@ $(function () {
 
         if (!response.error) {
 
-            // profile TODO add this
-            // $('#username').val(response.username);
-            // $('#email').val(response.email);
-
-            // $('#update-username').val(response.username);
-            // $('#update-email').val(response.email);
-
             // timeline
             $("#timeline h3").remove();
             response.forEach((item) => {
 
                 var timeline_item = $.parseHTML($('#timeline_template').html()),
-
                     content,
                     timeline_color,
                     timeline_icon,
                     tooltip,
-
-                    date = new Date(item.solved.substr(0, 10));
+                    date = new Date(item.timestamp.substr(0, 10));
 
                 $(timeline_item).find("#timeline_link").val(item.link);
 
@@ -55,8 +46,15 @@ $(function () {
                     content = item.quote;
                     $(timeline_item).find(".timeline_author > i").text(item.author);
                 } else {
-                    content = "User <i>" + item.quote + "</i> registered to the Game of Quotes system.";
+                    content = "User <i>" + item.username + "</i> registered to the Game of Quotes system.";
                     $(timeline_item).find(".timeline_author").remove();
+
+                    // for profile
+                    $('#username').val(item.username);
+                    $('#email').val(item.email);
+        
+                    $('#update-username').val(item.username);
+                    $('#update-email').val(item.email);
                 }
 
                 $(timeline_item).find("#timeline_content").html(content);

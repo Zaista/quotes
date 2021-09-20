@@ -1,8 +1,6 @@
 import db from './db.js';
 
 function get(client, user_id) {
-    const pipeline = [];
-
     // get only user document
     const stage_1 = { $match: { '_id': user_id } };
 
@@ -13,7 +11,7 @@ function get(client, user_id) {
     const stage_3 = { $lookup: { from: 'all_quotes', localField: 'solved.link', foreignField: 'link', as: 'quote' } };
 
     // add when quote was solved and mark to quote data
-    const stage_4 = { $addFields: { 'quote.solved': '$solved.date', 'quote.mark': 'quote' } };
+    const stage_4 = { $addFields: { 'quote.timestamp': { $toDate: '$solved.date' }, 'quote.mark': 'quote' } };
 
     // after lookup. quote data is in array, unwind it
     const stage_5 = { $unwind: { path: '$quote' } };
@@ -21,10 +19,35 @@ function get(client, user_id) {
     // pull out quote data as document root
     const stage_6 = { $replaceRoot: { newRoot: '$quote' } };
 
-    // // finally, sort by solved date
-    // const stage_7 = { $sort: { solved: 1 } };
+    // add a user uploaded quotes
+    const stage_7 = {
+        $unionWith: {
+            coll: 'all_quotes',
+            pipeline: [
+                { $match: { _id: user_id } },
+                { $project: { _id: 0 } },
+                { $addFields: { 'mark': 'upload', 'timestamp': { $toDate: '$date' } } }
+            ]
+        }
+    }
 
-    pipeline.push(stage_1, stage_2, stage_3, stage_4, stage_5, stage_6);
+    // add a user registered card
+    const stage_8 = {
+        $unionWith: {
+            coll: 'users',
+            pipeline: [{
+                $match: {
+                    _id: user_id
+                }
+            }, { $project: { username: 1, timestamp: '$registered', mark: 'user', email: 1 } }]
+        }
+    }
+
+    // finally, sort by timestamp
+    const stage_9 = { $sort: { timestamp: -1 } };
+
+    const pipeline = [];
+    pipeline.push(stage_1, stage_2, stage_3, stage_4, stage_5, stage_6, stage_7, stage_8, stage_9);
     return db.aggregate_users(client, pipeline);
 }
 
