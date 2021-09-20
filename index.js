@@ -5,13 +5,14 @@ import user_pipeline from './commons/user_pipeline.js';
 import dateFormat from 'dateformat';
 import passport from 'passport';
 import GoogleStrategy from 'passport-google-oauth20';
-import session from 'express-session';
+import session from 'cookie-session';
 import Strategy from 'passport-local';
 import { v4 as uuidv4 } from 'uuid';
 import Firestore from '@google-cloud/firestore';
 import mongodb from 'mongodb';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import tmp from './mongodb_views.js';
 
 // TODO nodemailer, less, eslint, morgan, 
 
