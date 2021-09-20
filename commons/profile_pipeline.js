@@ -39,7 +39,7 @@ function get(client, user_id) {
                 $match: {
                     _id: user_id
                 }
-            }, { $project: { username: 1, timestamp: '$registered', mark: 'user', email: 1 } }]
+            }, { $project: { username: 1, timestamp: '$registered', mark: 'user', email: 1, solved: { $size: '$solved' }, uploaded: { $size: '$uploaded' } } }]
         }
     }
 

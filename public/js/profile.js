@@ -13,8 +13,6 @@ $(function () {
 
     $.get(profile_endpoint, (response) => {
 
-        console.log(response)
-
         var last_year;
 
         if (!response.error) {
@@ -52,9 +50,13 @@ $(function () {
                     // for profile
                     $('#username').val(item.username);
                     $('#email').val(item.email);
-        
+
                     $('#update-username').val(item.username);
                     $('#update-email').val(item.email);
+
+                    // stats
+                    $("#quotes_solved").text(item.solved);
+                    $("#quotes_donated").text(item.uploaded);
                 }
 
                 $(timeline_item).find("#timeline_content").html(content);
@@ -91,14 +93,7 @@ $(function () {
                 $(".timeline .group").last().append(timeline_item);
             });
 
-            // stats
-            $("#quotes_solved").text(response.solved);
-            $("#quotes_donated").text(response.uploaded);
-            $("#quotes_max").text(response.max);
-
-
             // click listeners have to be defined here, after html is added to DOM
-
 
             // handle timeline quote link click
             $('.timeline_link').click(function (e) {
