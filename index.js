@@ -42,7 +42,8 @@ passport.use(new GoogleStrategy({
   callbackURL: '/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
   const user = { email: profile.emails[0].value, username: profile.displayName }
-  const db_user = await user_pipeline.get(client, user);
+  let db_user = await user_pipeline.get(client, user);
+  db_user = db_user[0];
   if (db_user) {
     console.log('User already known: ' + db_user.email);
     done(null, db_user);
@@ -54,7 +55,8 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.use(new Strategy(async function (username, password, done) {
-  const user = await user_pipeline.get(client, { 'username': username, 'password': password });
+  let user = await user_pipeline.get(client, { 'username': username, 'password': password });
+  user = user[0];
   if (user) {
     return done(null, user);
   } else {
@@ -69,7 +71,7 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (_id, done) {
   const user = await user_pipeline.get(client, { _id: new mongodb.ObjectId(_id) });
-  done(null, user);
+  done(null, user[0]);
 });
 
 app.use(passport.initialize());
@@ -88,7 +90,8 @@ app.get('/', (req, res) => {
 
 app.get('/api/quote', async (req, res) => {
 
-  const quote = await quote_pipeline.get(client, req.user?._id, req.query.quote);
+  let quote = await quote_pipeline.get(client, req.user?._id, req.query.quote);
+  quote = quote[0];
 
   if (quote == null) {
     return res.send({ error: 'Database connection error.' });

@@ -28,8 +28,6 @@ var quote,
     facebookURL = "https://www.facebook.com/sharer/sharer.php?u=https://quotes.jovanilic.com/quotes.html",
     twitterURL = "https://twitter.com/intent/tweet?url=https://quotes.jovanilic.com/quotes.html";
 
-
-
 checkUserStatus();
 
 function checkUserStatus() {

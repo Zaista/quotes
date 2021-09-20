@@ -19,7 +19,7 @@ function get(client, user) {
     const stage_2 = { $project: { 'username': 1, 'email': 1 } };
 
     pipeline.push(stage_1, stage_2);
-    return db.aggregate(client, pipeline);
+    return db.aggregate_users(client, pipeline);
 }
 
 function insert(client, user) {

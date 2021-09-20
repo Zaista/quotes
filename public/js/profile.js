@@ -19,16 +19,16 @@ $(function () {
 
         if (!response.error) {
 
-            // profile
-            $('#username').val(response.username);
-            $('#email').val(response.email);
+            // profile TODO add this
+            // $('#username').val(response.username);
+            // $('#email').val(response.email);
 
-            $('#update-username').val(response.username);
-            $('#update-email').val(response.email);
+            // $('#update-username').val(response.username);
+            // $('#update-email').val(response.email);
 
             // timeline
             $("#timeline h3").remove();
-            response.timeline.forEach((item) => {
+            response.forEach((item) => {
 
                 var timeline_item = $.parseHTML($('#timeline_template').html()),
 
@@ -37,7 +37,7 @@ $(function () {
                     timeline_icon,
                     tooltip,
 
-                    date = new Date(item.insert_date.substr(0, 10));
+                    date = new Date(item.solved.substr(0, 10));
 
                 $(timeline_item).find("#timeline_link").val(item.link);
 
@@ -51,11 +51,11 @@ $(function () {
                 last_year = date.getFullYear();
 
 
-                if (item.addition) {
-                    content = item.content;
-                    $(timeline_item).find(".timeline_author > i").text(item.addition);
+                if (item.author) {
+                    content = item.quote;
+                    $(timeline_item).find(".timeline_author > i").text(item.author);
                 } else {
-                    content = "User <i>" + item.content + "</i> registered to the Game of Quotes system.";
+                    content = "User <i>" + item.quote + "</i> registered to the Game of Quotes system.";
                     $(timeline_item).find(".timeline_author").remove();
                 }
 
