@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "npm run start-npm",
+    "start-npm": "node index.js"
   },
   "author": "Zaista",
   "license": "MIT",
@@ -14,12 +15,14 @@
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
     "dateformat": "^4.5.1",
-    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.9",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0"
   }
 }
