@@ -39,7 +39,8 @@ client.connect();
 passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
+  callbackURL: '/auth/google/callback',
+  proxy: true
 }, async (accessToken, refreshToken, profile, done) => {
   const user = { email: profile.emails[0].value, username: profile.displayName }
   let db_user = await user_pipeline.get(client, user);
