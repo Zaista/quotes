@@ -20,7 +20,7 @@ var quote,
     status_endpoint = "api/status",
     logout_endpoint = "api/logout",
     login_endpoint = "api/login",
-    userRegisterURL = "api/user_register.php",
+    register_endpoint = "api/register",
     userRecoverURL = "api/user_recover.php",
     submit_endpoint = "api/submit",
     solution_endpoint = "api/solution",
@@ -356,13 +356,14 @@ $(document).ready(function () {
 
             var postData = $("#login-username, #login-password").serialize();
 
-            $.post(login_endpoint, postData, function (data) {
-                if (data.login) {
-                    location.href = "?quote=" + quoteId;
-                }
-                else {
-                    showAlert("login", "danger", data);
-                }
+            const request = $.post(login_endpoint, postData);
+
+            request.done(() => {
+                location.href = "?quote=" + quoteId;
+            });
+
+            request.fail(() => {
+                showAlert("login", "danger", "Username or password incorrect.");
             });
 
             // prevent default behaviour
@@ -373,13 +374,15 @@ $(document).ready(function () {
     });
 
     $('#user-register-form').submit(function () {
-        $.post(userRegisterURL, $(this).serialize(), function (data, status) {
-            if (status == 'success' && data == 'User successfully registered. Verification email sent.') {
+        $.post(register_endpoint, $(this).serialize(), function (data) {
+            if (data.success) {
+                $("#user-register-dialog").modal('hide');
+                showAlert("quote", "success", 'Email successfully registered.');
+                checkUserStatus();
+            } else {
                 $("#user-register-dialog").modal('hide');
                 $("#user-login-dialog").modal('show');
-                showAlert("login", "warning", data);
-            } else {
-                showAlert("register", "danger", data);
+                showAlert("login", "danger", 'Email already registered, enter the password.');
             }
         });
 
@@ -535,12 +538,12 @@ function checkEnd(id) {
 
         // mark the completion in database
         $.get(solution_endpoint + "?quote=" + quoteId, function (response) {
-            if(response.success) {
+            if (response.success) {
                 alertMessage = response.success;
-            // if (response == "success" && data == "User soulution confirmed") {
-            //     alertMessage = "Congratulations! Quote added to your timeline.";
-            // } else if (status == "success" && data == "Quote already solved") {
-            //     alertMessage = "Congratulations! You solved the quote.";
+                // if (response == "success" && data == "User soulution confirmed") {
+                //     alertMessage = "Congratulations! Quote added to your timeline.";
+                // } else if (status == "success" && data == "Quote already solved") {
+                //     alertMessage = "Congratulations! You solved the quote.";
             } else {
                 // alertMessage = "Congratulations! Login to track what quotes you solved, view your stats and much more!";
                 alertMessage = 'Something went wrong.'

@@ -1,6 +1,6 @@
 {
   "name": "quotes",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Game of Quotes source code",
   "type": "module",
   "main": "index.js",
@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/firestore": "^4.15.1",
+    "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
     "dateformat": "^4.5.1",

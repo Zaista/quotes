@@ -4,7 +4,7 @@ function get(client, user) {
     let pipeline = [];
 
     let stage_1;
-    if (user.password) {
+    if (user.username) {
         // local login
         stage_1 = { $match: user };
     } else if (user.email) {
@@ -16,7 +16,7 @@ function get(client, user) {
     }
 
     // project only username and email
-    const stage_2 = { $project: { 'username': 1, 'email': 1 } };
+    const stage_2 = { $project: { 'username': 1, 'email': 1, 'password': 1 } };
 
     pipeline.push(stage_1, stage_2);
     return db.aggregate_users(client, pipeline);

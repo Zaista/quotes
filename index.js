@@ -4,7 +4,7 @@ import quote_pipeline from './commons/quote_pipeline.js';
 import profile_pipeline from './commons/profile_pipeline.js';
 import user_pipeline from './commons/user_pipeline.js';
 import passport from 'passport';
-import Strategy from 'passport-local';
+import LocalStrategy from 'passport-local';
 import GoogleStrategy from 'passport-google-oauth20';
 import session from 'cookie-session';
 import cookieParser from 'cookie-parser';
@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Firestore from '@google-cloud/firestore';
 import mongodb from 'mongodb';
 import dateFormat from 'dateformat';
+import bcrypt from 'bcrypt';
 
 // TODO nodemailer, less, eslint, morgan, 
 
@@ -55,16 +56,14 @@ passport.use(new GoogleStrategy({
   }
 }));
 
-passport.use(new Strategy(async function (username, password, done) {
-  let user = await user_pipeline.get(client, { 'username': username, 'password': password });
-  user = user[0];
-  if (user) {
-    return done(null, user);
-  } else {
-    return done(null, false, { message: 'Something went wrong.' });
-  }
-}
-));
+passport.use(new LocalStrategy(async function (username, password, done) {
+  let user = await user_pipeline.get(client, { 'username': username });
+  const correctPassword = await bcrypt.compare(password, user[0].password);
+  if (correctPassword)
+    return done(null, user[0]);
+  else
+    return done(null, false);
+}));
 
 passport.serializeUser(function (user, done) {
   done(null, user._id);
@@ -103,7 +102,7 @@ app.get('/api/quote', async (req, res) => {
 });
 
 app.get('/api/solution', async (req, res) => {
-  if (!req.user) return res.status(401).send({ error: 'Not authorized.' })
+  if (!req.user) return res.status(401).send({ error: 'Unauthorized.' })
   const result = await quote_pipeline.solve(client, req.user._id, req.query.quote);
   // TODO add check for valid quote_link
   if (result) return res.send({ success: 'Quote solved.' });
@@ -130,10 +129,26 @@ app.post('/api/submit', async (req, res) => {
   const result = await quote_pipeline.submit(client, user_id, quote);
   if (result) {
     console.log('Quote submited');
-    res.send({ 'result': 'success' });
+    res.send({ result: 'success' });
   } else {
     console.log('Error submitting quote');
-    res.send({ 'error': 'something went wrong.' });
+    res.send({ error: 'something went wrong' });
+  }
+});
+
+app.post('/api/register', async (req, res) => {
+  let user = await user_pipeline.get(client, { 'email': req.body.email });
+  if (user[0]) {
+    res.send({ error: 'Email already in use.' })
+  } else {
+    const hash = await bcrypt.hash(req.body.password, 10);
+    user = { email: req.body.email, password: hash };
+    const new_id = await user_pipeline.insert(client, user);
+    console.log('New user created: ' + user.email + ' with id: ' + new_id);
+    req.login(user, function (err) {
+      if (err) { return next(err); }
+      res.send({ success: 'Email registered.' })
+    });
   }
 });
 
@@ -155,7 +170,6 @@ app.get('/auth/google/callback', passport.authenticate('google'), (req, res) => 
 });
 
 app.post('/api/login', passport.authenticate('local'), function (req, res) {
-  if (!req.user) { return res.redirect('/login'); }
   res.send({ 'login': 'success' });
 });
 
@@ -168,7 +182,6 @@ app.get('/api/logout', async (req, res) => {
 app.get('/api/version', (req, res) => {
   res.send({ version: `${process.env.npm_package_version}` })
 });
-
 
 async function setupEnv() {
   const firestore = new Firestore({ projectId: 'deductive-span-313911' });
