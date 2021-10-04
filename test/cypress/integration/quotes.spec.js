@@ -18,5 +18,5 @@ describe('Game of Quotes', () => {
         cy.get('#about-button').should('exist');
         cy.get('#profile-button').should('exist').should('be.disabled');
         cy.get('#user-button').should('exist');
-    })
-})
+    });
+});
