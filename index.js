@@ -43,7 +43,7 @@ passport.use(new GoogleStrategy({
   callbackURL: '/auth/google/callback',
   proxy: true
 }, async (accessToken, refreshToken, profile, done) => {
-  const user = { email: profile.emails[0].value, username: profile.displayName }
+  const user = { email: profile.emails[0].value }
   let db_user = await user_pipeline.get(client, user);
   db_user = db_user[0];
   if (db_user) {
@@ -56,13 +56,14 @@ passport.use(new GoogleStrategy({
   }
 }));
 
-passport.use(new LocalStrategy(async function (username, password, done) {
-  let user = await user_pipeline.get(client, { 'username': username });
-  const correctPassword = await bcrypt.compare(password, user[0].password);
-  if (correctPassword)
-    return done(null, user[0]);
-  else
-    return done(null, false);
+passport.use(new LocalStrategy({ usernameField: "email" }, async function (email, password, done) {
+  let user = await user_pipeline.get(client, { email: email });
+  if (user[0]) {
+    const correctPassword = await bcrypt.compare(password, user[0].password);
+    if (correctPassword)
+      return done(null, user[0]);
+  }
+  return done(null, false);
 }));
 
 passport.serializeUser(function (user, done) {

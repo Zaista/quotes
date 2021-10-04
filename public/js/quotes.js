@@ -335,7 +335,7 @@ $(document).ready(function () {
      * USER FORM *
     \*************/
 
-    $("#login-username").on("keypress", function (e) {
+    $("#login-email").on("keypress", function (e) {
         if (e.which == 13) {
             $("#login-password").focus();
         }
@@ -349,28 +349,20 @@ $(document).ready(function () {
 
     $("#login-button").click(function () {
 
-        var usernameFlag = $("#login-username")[0].validity.valid;
-        var passwordFlag = $("#login-password")[0].validity.valid;
+        var post_data = { email: $('#login-email').val(), password: $('#login-password').val() };
 
-        if (usernameFlag && passwordFlag) {
+        const request = $.post(login_endpoint, post_data);
 
-            var postData = $("#login-username, #login-password").serialize();
+        request.done(() => {
+            location.href = "?quote=" + quoteId;
+        });
 
-            const request = $.post(login_endpoint, postData);
+        request.fail(() => {
+            showAlert("login", "danger", "Email or password incorrect.");
+        });
 
-            request.done(() => {
-                location.href = "?quote=" + quoteId;
-            });
-
-            request.fail(() => {
-                showAlert("login", "danger", "Username or password incorrect.");
-            });
-
-            // prevent default behaviour
-            return false;
-        } else {
-            showAlert("login", "danger", "Username or password not set.");
-        }
+        // prevent default behaviour
+        return false;
     });
 
     $('#user-register-form').submit(function () {
