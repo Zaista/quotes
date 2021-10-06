@@ -43,7 +43,7 @@ passport.use(new GoogleStrategy({
   callbackURL: '/auth/google/callback',
   proxy: true
 }, async (accessToken, refreshToken, profile, done) => {
-  const user = { email: profile.emails[0].value }
+  const user = { email: profile.emails[0].value, solved: [], uploaded: [] }
   let db_user = await user_pipeline.get(client, user);
   db_user = db_user[0];
   if (db_user) {
@@ -143,7 +143,7 @@ app.post('/api/register', async (req, res) => {
     res.send({ error: 'Email already in use.' })
   } else {
     const hash = await bcrypt.hash(req.body.password, 10);
-    user = { email: req.body.email, password: hash };
+    user = { email: req.body.email, password: hash, solved: [], uploaded: [] };
     const new_id = await user_pipeline.insert(client, user);
     console.log('New user created: ' + user.email + ' with id: ' + new_id);
     req.login(user, function (err) {
