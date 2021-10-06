@@ -1,4 +1,4 @@
 {
     "projectId": "quotes",
-    "baseUrl": "https://quotes.jovanilic.com"
+    "baseUrl": "http://localhost:8080"
 }

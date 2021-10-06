@@ -175,8 +175,10 @@ app.post('/api/login', passport.authenticate('local'), function (req, res) {
 });
 
 app.get('/api/logout', async (req, res) => {
-  console.log('User \'' + req.user.email + '\' logged out.');
-  req.logout();
+  if(req.user) {
+    console.log('User \'' + req.user.email + '\' logged out.');
+    req.logout();
+  }
   res.redirect('/');
 });
 
