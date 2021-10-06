@@ -33,7 +33,7 @@ checkUserStatus();
 function checkUserStatus() {
     $.get(status_endpoint, (session) => {
         if (!session.error) {
-            $("#session-username").text(session.username);
+            $("#session-email").text(session.email);
             $(".fa-user-tie").css("color", "#28a745");
             $("#user-button").attr("data-target", "#user-logout-dialog");
             $("#profile-button").prop("disabled", false);
@@ -79,9 +79,6 @@ function getQuote(url) {
 
                 $("#twitter-link").attr("href", twitterURL + "?quote=" + quoteId);
                 $("#twitter-link button").prop("disabled", false);
-
-                // set link to right hand input
-                $('#solution-id').val(quoteId);
 
                 // Replace all double quotes and single quotes respectively
                 quote = quote.replace(/&quot;/g, '"').replace(/&#39;/g, '\'');

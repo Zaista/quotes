@@ -44,14 +44,11 @@ $(function () {
                     content = item.quote;
                     $(timeline_item).find(".timeline_author > i").text(item.author);
                 } else {
-                    content = "User <i>" + item.username + "</i> registered to the Game of Quotes system.";
+                    content = "User <i>" + item.email + "</i> registered to the Game of Quotes system.";
                     $(timeline_item).find(".timeline_author").remove();
 
                     // for profile
-                    $('#username').val(item.username);
                     $('#email').val(item.email);
-
-                    $('#update-username').val(item.username);
                     $('#update-email').val(item.email);
 
                     // stats
@@ -144,9 +141,6 @@ $(function () {
             if (status === 'success' && data === 'Password successfully updated!') {
                 location.href = 'quotes.html?login=true';
             } else {
-                $('#change-alert').removeClass();
-                $('#change-alert').addClass('alert alert-danger');
-                $('#change-alert-text').append('<br>' + data);
             }
         });
     });
