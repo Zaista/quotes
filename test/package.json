@@ -1,6 +1,6 @@
 {
   "name": "cypress-tests",
-  "version": "1.4.0",
+  "version": "2.4.0",
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {

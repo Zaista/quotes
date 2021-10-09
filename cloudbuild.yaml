@@ -1,4 +1,6 @@
 steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy']
 - name: cypress/included:8.5.0
   entrypoint: npm
   args: ['ci']
