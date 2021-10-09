@@ -1,6 +1,6 @@
 import db from './db.js';
 
-function get(client, user_id) {
+async function get(client, user_id) {
     // get only user document
     const stage_1 = { $match: { '_id': user_id } };
 
@@ -48,7 +48,8 @@ function get(client, user_id) {
 
     const pipeline = [];
     pipeline.push(stage_1, stage_2, stage_3, stage_4, stage_5, stage_6, stage_7, stage_8, stage_9);
-    return db.aggregate_users(client, pipeline);
+    const result = await db.aggregate_users(client, pipeline);
+    return result;
 }
 
 export default { get };

@@ -45,7 +45,6 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
   const user = { email: profile.emails[0].value, solved: [], uploaded: [] }
   let db_user = await user_pipeline.get(client, user);
-  db_user = db_user[0];
   if (db_user) {
     console.log('User already known: ' + db_user.email);
     done(null, db_user);
@@ -58,10 +57,11 @@ passport.use(new GoogleStrategy({
 
 passport.use(new LocalStrategy({ usernameField: "email" }, async function (email, password, done) {
   let user = await user_pipeline.get(client, { email: email });
-  if (user[0]) {
-    const correctPassword = await bcrypt.compare(password, user[0].password);
+  console.log(user);
+  if (user) {
+    const correctPassword = await bcrypt.compare(password, user.password);
     if (correctPassword)
-      return done(null, user[0]);
+      return done(null, user);
   }
   return done(null, false);
 }));
@@ -72,7 +72,7 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (_id, done) {
   const user = await user_pipeline.get(client, { _id: new mongodb.ObjectId(_id) });
-  done(null, user[0]);
+  done(null, user);
 });
 
 app.use(passport.initialize());
@@ -90,16 +90,13 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/quote', async (req, res) => {
+  const quote = await quote_pipeline.get(client, req.user?._id, req.query.quote);
 
-  let quote = await quote_pipeline.get(client, req.user?._id, req.query.quote);
-  quote = quote[0];
-
-  if (quote == null) {
+  if (!quote)
     return res.send({ error: 'Database connection error.' });
-  }
 
   console.log('Requested quote id: ' + quote.link);
-  res.send(quote);
+  return res.send(quote);
 });
 
 app.get('/api/solution', async (req, res) => {
@@ -139,7 +136,7 @@ app.post('/api/submit', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
   let user = await user_pipeline.get(client, { 'email': req.body.email });
-  if (user[0]) {
+  if (user) {
     res.send({ error: 'Email already in use.' })
   } else {
     const hash = await bcrypt.hash(req.body.password, 10);
@@ -175,7 +172,7 @@ app.post('/api/login', passport.authenticate('local'), function (req, res) {
 });
 
 app.get('/api/logout', async (req, res) => {
-  if(req.user) {
+  if (req.user) {
     console.log('User \'' + req.user.email + '\' logged out.');
     req.logout();
   }

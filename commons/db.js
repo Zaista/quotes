@@ -1,6 +1,7 @@
 async function aggregate_users(client, pipeline) {
     try {
-        return await client.db('quotes').collection('users').aggregate(pipeline).toArray();
+        const result = await client.db('quotes').collection('users').aggregate(pipeline).toArray();
+        return result;
     } catch (err) {
         console.log('ERROR: ' + err.stack);
         return null;
@@ -9,7 +10,8 @@ async function aggregate_users(client, pipeline) {
 
 async function aggregate_quotes(client, pipeline) {
     try {
-        return await client.db('quotes').collection('all_quotes').aggregate(pipeline).toArray();
+        const result = await client.db('quotes').collection('all_quotes').aggregate(pipeline).toArray();
+        return result[0];
     } catch (err) {
         console.log('ERROR: ' + err.stack);
         return null;

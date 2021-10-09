@@ -1,6 +1,6 @@
 import db from './db.js';
 
-function get(client, user_id, quote_link) {
+async function get(client, user_id, quote_link) {
     let pipeline = [];
 
     if (quote_link) {
@@ -21,19 +21,22 @@ function get(client, user_id, quote_link) {
         // TODO filter out solved quotes
     }
 
-    return db.aggregate_quotes(client, pipeline);
+    const result = await db.aggregate_quotes(client, pipeline);
+    return result;
 }
 
-function solve(client, user_id, quote_link) {
+async function solve(client, user_id, quote_link) {
     const query = { '_id': user_id }
     const pipeline = { $push: { 'solved': { 'date': new Date(Date.now()), 'link': quote_link } } };
-    return db.update(client, query, pipeline);
+    const result = await db.update(client, query, pipeline);
+    return result;
 }
 
-function submit(client, user_id, quote) {
+async function submit(client, user_id, quote) {
     const query = { '_id': user_id }
     const pipeline = { $push: { 'uploaded': quote } };
-    return db.update(client, query, pipeline);
+    const result = await db.update(client, query, pipeline);
+    return result;
 }
 
 export default { get, solve, submit };
