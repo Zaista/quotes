@@ -1,4 +1,4 @@
-FROM cypress/included:8.3.0
+FROM cypress/included:8.5.0
 
 COPY .git .git
 COPY test/cypress cypress

@@ -1,16 +1,9 @@
 steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'deploy'
-  args: ['app', 'deploy']
-- name: 'gcr.io/cloud-builders/curl'
-  entrypoint: 'bash'
-  args: ['-c', 'curl -X POST -H "application/json" "https://cloudbuild.googleapis.com/v1/projects/deductive-span-313911/triggers/cypress-tests:webhook?key=$$API&secret=$$SECRET" -d "{}"']
-  secretEnv: ['SECRET', 'API']
-  waitFor: ['deploy']
-availableSecrets:
-  secretManager:
-  - versionName: projects/307352298506/secrets/cypress-tests/versions/latest
-    env: 'SECRET'
-  - versionName: projects/307352298506/secrets/cypress-api-key/versions/latest
-    env: 'API'
-timeout: 1600s
+- name: cypress/included:8.5.0
+  entrypoint: npm
+  args: ['ci']
+  dir: test
+- name: cypress/included:8.5.0
+  entrypoint: npm
+  args: ['run', 'ci']
+  dir: test
