@@ -57,7 +57,6 @@ passport.use(new GoogleStrategy({
 
 passport.use(new LocalStrategy({ usernameField: "email" }, async function (email, password, done) {
   let user = await user_pipeline.get(client, { email: email });
-  console.log(user);
   if (user) {
     const correctPassword = await bcrypt.compare(password, user.password);
     if (correctPassword)
