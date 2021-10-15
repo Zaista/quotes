@@ -12,3 +12,4 @@ steps:
   - 'APP_VERSION=2.2.3'
   args: ['run', 'ci']
   dir: test
+timeout: 1800s
