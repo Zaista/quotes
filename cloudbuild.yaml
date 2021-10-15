@@ -9,6 +9,6 @@ steps:
   entrypoint: npm
   env:
   - 'CYPRESS_API_URL=https://cypress-director-gp34ticnkq-ey.a.run.app'
-  - 'APP_VERSION=2.2.2'
+  - 'APP_VERSION=2.2.3'
   args: ['run', 'ci']
   dir: test
