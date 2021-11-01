@@ -21,6 +21,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cookieParser());
+app.enable('trust proxy');
 
 dotenv.config();
 
