@@ -1,6 +1,6 @@
 {
   "name": "quotes",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Game of Quotes source code",
   "type": "module",
   "main": "index.js",
