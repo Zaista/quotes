@@ -1,15 +1,15 @@
 steps:
 - name: 'gcr.io/cloud-builders/gcloud'
   args: ['app', 'deploy']
-- name: cypress/included:8.5.0
+- name: cypress/included:8.7.0
   entrypoint: npm
   args: ['ci']
   dir: test
-- name: cypress/included:8.5.0
+- name: cypress/included:8.7.0
   entrypoint: npm
   env:
   - 'CYPRESS_API_URL=https://cypress-director-gp34ticnkq-ey.a.run.app'
-  - 'APP_VERSION=2.2.4'
+  - 'APP_VERSION=2.2.5'
   args: ['run', 'ci']
   dir: test
 timeout: 1800s

@@ -1,6 +1,6 @@
 {
   "name": "cypress-tests",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "Cypress tests",
   "main": "support/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "Zaista",
   "license": "MIT",
   "devDependencies": {
-    "cypress": "8.5.0",
+    "cypress": "8.7.0",
     "cy2": "1.2.1"
   }
 }

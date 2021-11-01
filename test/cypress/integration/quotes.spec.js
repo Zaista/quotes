@@ -18,5 +18,15 @@ describe('Game of Quotes', () => {
         cy.get('#about-button').should('exist');
         cy.get('#profile-button').should('exist').should('be.disabled');
         cy.get('#user-button').should('exist');
+
+        cy.get('.underscores').then(($el) => {
+            expect($el.get(0)).to.have.attr('highlighted', 'yes');
+            expect($el.get(1)).to.have.attr('highlighted', '');
+
+            $el.get(1).click();
+
+            expect($el.get(0)).to.have.attr('highlighted', '');
+            expect($el.get(1)).to.have.attr('highlighted', 'yes');
+        });
     });
 });
