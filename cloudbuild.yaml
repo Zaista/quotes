@@ -9,7 +9,7 @@ steps:
   entrypoint: npm
   env:
   - 'CYPRESS_API_URL=https://cypress-director-gp34ticnkq-ey.a.run.app'
-  - 'APP_VERSION=3.0.0'
+  - 'APP_VERSION=3.0.1'
   args: ['run', 'ci']
   dir: test
 timeout: 1800s
