@@ -1,13 +1,13 @@
 {
   "name": "quotes",
-  "version": "3.0.1",
+  "version": "3.1.1",
   "description": "Game of Quotes source code",
   "type": "module",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "npm run start-npm",
-    "start-npm": "node index.js",
-    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $APP_VERSION --config baseUrl=https://quotes.jovanilic.com",
+    "start-npm": "node app.js",
+    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID --config baseUrl=https://quotes.jovanilic.com",
     "open": "cypress open",
     "run": "cypress run"
   },
