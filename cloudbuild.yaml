@@ -8,5 +8,6 @@ steps:
     entrypoint: npm
     env:
       - 'CYPRESS_API_URL=https://cypress-director-gp34ticnkq-ey.a.run.app'
+      - 'BUILD=$BUILD_ID'
     args: ['run', 'ci']
 timeout: 1800s

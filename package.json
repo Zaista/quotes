@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run start-npm",
     "start-npm": "node app.js",
-    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD_ID --config baseUrl=https://quotes.jovanilic.com",
+    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD --config baseUrl=https://quotes.jovanilic.com",
     "open": "cypress open",
     "run": "cypress run"
   },
