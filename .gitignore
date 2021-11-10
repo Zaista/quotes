@@ -1,5 +1,4 @@
-node_modules
-private
-test/cypress/videos
-test/cypress/screenshots
-docker-compose.yaml
+node_modules/
+private/
+cypress/videos
+cypress/screenshots

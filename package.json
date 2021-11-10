@@ -6,7 +6,10 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run start-npm",
-    "start-npm": "node index.js"
+    "start-npm": "node index.js",
+    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $APP_VERSION --config baseUrl=https://quotes.jovanilic.com",
+    "open": "cypress open",
+    "run": "cypress run"
   },
   "author": "Zaista",
   "license": "MIT",
@@ -23,5 +26,9 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "cypress": "8.7.0",
+    "cy2": "1.2.1"
   }
 }
