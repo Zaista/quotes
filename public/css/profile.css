@@ -1,237 +1,230 @@
 body {
-    overflow: visible;
+  overflow: visible;
 }
 
 /* PROFILE */
 
 .input-group {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 /* TIMELINE */
 
 :root {
-    --timeline-blue: #4557bb; 
-    --timeline-green: #3D9970;
-    --timeline-orange: #FF851B;
-    --timeline-red: #85144b;
-    --timeline-secondary: #ffffff;
+  --timeline-blue: #4557bb;
+  --timeline-green: #3d9970;
+  --timeline-orange: #ff851b;
+  --timeline-red: #85144b;
+  --timeline-secondary: #ffffff;
 }
 
 .timeline {
-    position: relative;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+  position: relative;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 }
 
 .timeline:before {
-    content: "";
-    width: 4px;
-    height: 100%;
-    background-color: var(--timeline-blue);
+  content: '';
+  width: 4px;
+  height: 100%;
+  background-color: var(--timeline-blue);
 
-    position: absolute;
-    top: 0;
+  position: absolute;
+  top: 0;
 }
 
 .group {
-    position: relative;
+  position: relative;
 }
 
 .group:not(:first-of-type) {
-    margin-top: 2.5rem;
+  margin-top: 2.5rem;
 }
 
 .year {
-    padding: .5rem 1rem;
-    color: var(--timeline-secondary);
-    background-color: var(--timeline-blue);
+  padding: 0.5rem 1rem;
+  color: var(--timeline-secondary);
+  background-color: var(--timeline-blue);
 
-    position: absolute;
-    left: 0;
-    top: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .box {
-    position: relative;
+  position: relative;
 }
 
 .box:not(:last-of-type) {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .box:before {
-    content: "";
-    width: 100%;
-    height: 2px;
-    background-color: var(--timeline-blue);
+  content: '';
+  width: 100%;
+  height: 2px;
+  background-color: var(--timeline-blue);
 
-    position: absolute;
-    left: 0;
-    z-index: -1;
+  position: absolute;
+  left: 0;
+  z-index: -1;
 
-    top: 50%;
-    transform: translateY(-50%);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .timeline_date {
-    min-width: 65px;
-    position: absolute;
-    left: 0;
+  min-width: 65px;
+  position: absolute;
+  left: 0;
 
-    box-sizing: border-box;
-    padding: .5rem 1rem;
-    text-align: center;
+  box-sizing: border-box;
+  padding: 0.5rem 1rem;
+  text-align: center;
 
-    color: var(--timeline-secondary);
+  color: var(--timeline-secondary);
 }
 
 .date_blue {
-    background-color: var(--timeline-blue);
+  background-color: var(--timeline-blue);
 }
 
 .date_orange {
-    background-color: var(--timeline-orange);
+  background-color: var(--timeline-orange);
 }
 
 .date_green {
-    background-color: var(--timeline-green);
+  background-color: var(--timeline-green);
 }
 
 .date_red {
-    background-color: var(--timeline-red);
+  background-color: var(--timeline-red);
 }
 
 .timeline_day {
-    font-size: 1.5rem;
-    font-weight: 500;
-    display: block;
+  font-size: 1.5rem;
+  font-weight: 500;
+  display: block;
 }
 
 .timeline_month {
-    display: block;
-    font-size: .8em;
-    text-transform: uppercase;
+  display: block;
+  font-size: 0.8em;
+  text-transform: uppercase;
 }
 
 .timeline_quote {
-    padding: 1.5rem 2rem;
-    border-radius: 2px;
-    border-left: 3px solid;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 1px 2px 0 rgba(0, 0, 0, .24);
+  padding: 1.5rem 2rem;
+  border-radius: 2px;
+  border-left: 3px solid;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 }
 
-@media screen and (min-width: 641px){
+@media screen and (min-width: 641px) {
+  .timeline:before {
+    left: 30px;
+  }
 
-    .timeline:before {
-        left: 30px;
-    }
+  .group {
+    padding-top: 55px;
+  }
 
-    .group {
-        padding-top: 55px;
-    }
+  .box {
+    padding-left: 80px;
+  }
 
-    .box {
-        padding-left: 80px;
-    }
+  .box:before {
+    top: 50%;
+    transform: translateY(-50%);
+  }
 
-    .box:before {
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .timeline_date {
-        top: 50%;
-        margin-top: -36px;
-    }
+  .timeline_date {
+    top: 50%;
+    margin-top: -36px;
+  }
 }
 
-@media screen and (max-width: 640px){
+@media screen and (max-width: 640px) {
+  .timeline:before {
+    left: 0;
+  }
 
-    .timeline:before {
-        left: 0;
-    }
+  .group {
+    padding-top: 40px;
+  }
 
-    .group {
-        padding-top: 40px;
-    }
+  .box {
+    padding-left: 20px;
+    padding-top: 90px;
+  }
 
-    .box {
-        padding-left: 20px;
-        padding-top: 90px;
-    }
+  .timeline_date {
+    top: 10px;
+  }
 
-    .timeline_date {
-        top: 10px;
-    }
-
-    #password-card {
-        margin-top: 25px;
-    }
+  #password-card {
+    margin-top: 25px;
+  }
 }
 
 @media screen and (min-width: 768px) {
-
-
 }
 
 @media screen and (max-width: 767px) {
-
 }
 
 .timeline_quote {
-    position: relative;
-    background-color: #F9F9F9;
+  position: relative;
+  background-color: #f9f9f9;
 }
 
 .timeline_quote:hover {
-    background-color: #EFEFEF;
+  background-color: #efefef;
 }
 
 .timeline_quote p {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    line-height: 1.5;
-    padding-right: 2em;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+  padding-right: 2em;
 }
 
 .timeline_quote p:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .timeline_quote .timeline_author {
-    position: absolute;
-    right: 2.5em;
-    bottom: 0.5em;
-    color: grey;
+  position: absolute;
+  right: 2.5em;
+  bottom: 0.5em;
+  color: grey;
 }
 
 .timeline_quote .timeline_icon {
-    position: absolute;
-    right: 2em;
-    top: 0.5em;
+  position: absolute;
+  right: 2em;
+  top: 0.5em;
 }
 
 .timeline_quote .timeline_link {
-    position: absolute;
-    right: 0.5em;
-    top: 0.5em;
-    color: gray;
-    cursor: pointer;
+  position: absolute;
+  right: 0.5em;
+  top: 0.5em;
+  color: gray;
+  cursor: pointer;
 }
 
 /* SOLVED */
 
-
 /* STATS */
-
 
 /* GENERAL */
 
 .tab-pane {
-    padding-top: 25px;
+  padding-top: 25px;
 }
 
 .modal-body input {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
