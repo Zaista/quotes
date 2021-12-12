@@ -16,5 +16,10 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
+// import * as mongo from 'cypress-mongodb';
+const mongo = require('cypress-mongodb');
+
+mongo.setupMongoDB();
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

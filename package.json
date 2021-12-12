@@ -2,8 +2,8 @@
   "name": "quotes",
   "version": "3.1.1",
   "description": "Game of Quotes source code",
-  "type": "module",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "npm run start-npm",
     "start-npm": "node app.js",
@@ -28,7 +28,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "cypress": "8.7.0",
-    "cy2": "1.2.1"
+    "cy2": "1.2.1",
+    "cypress": "9.0.0",
+    "cypress-mongodb": "^1.2.0"
   }
 }
