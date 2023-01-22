@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import {SecretManagerServiceClient} from '@google-cloud/secret-manager';
 import quote_pipeline from './commons/quote_pipeline.js';
 import profile_pipeline from './commons/profile_pipeline.js';
 import user_pipeline from './commons/user_pipeline.js';
