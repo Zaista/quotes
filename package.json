@@ -9,12 +9,11 @@
     "start-npm": "node app.js",
     "ci": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD --config baseUrl=https://quotes.jovanilic.com",
     "open": "cypress open",
-    "run": "cypress run"
+    "run": "cypress run --spec cypress/integration/quotes.spec.js"
   },
   "author": "Zaista",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/firestore": "^4.15.1",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
@@ -22,7 +21,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.9",
-    "passport": "^0.4.1",
+    "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "uuid": "^8.3.2"

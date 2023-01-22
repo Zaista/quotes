@@ -9,7 +9,6 @@ import GoogleStrategy from 'passport-google-oauth20';
 import session from 'cookie-session';
 import cookieParser from 'cookie-parser';
 import { v4 as uuidv4 } from 'uuid';
-import Firestore from '@google-cloud/firestore';
 import mongodb from 'mongodb';
 import dateFormat from 'dateformat';
 import bcrypt from 'bcrypt';
@@ -31,14 +30,14 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(
   session({
-    secret: process.env.SESSION,
+    secret: process.env.sessionKey,
     resave: false,
     saveUninitialized: false,
   })
 );
 
 const { MongoClient } = mongodb;
-const client = new MongoClient(process.env.MONGODB, {
+const client = new MongoClient(process.env.mongodbUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -47,8 +46,8 @@ client.connect();
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
+      clientID: process.env.clientId,
+      clientSecret: process.env.clientSecret,
       callbackURL: '/auth/google/callback',
       proxy: true,
     },
@@ -223,10 +222,30 @@ app.get('/api/version', (req, res) => {
 });
 
 async function setupEnv() {
-  const firestore = new Firestore({ projectId: 'deductive-span-313911' });
-  const env = await firestore.collection('data').doc('env').get();
-  process.env.MONGODB = env.data().mongodb_uri;
-  process.env.SESSION = env.data().session_key;
-  process.env.CLIENT_ID = env.data().google_client_id;
-  process.env.CLIENT_SECRET = env.data().google_client_secret;
+  let projectId = 'deductive-span-313911';
+  const client = new SecretManagerServiceClient();
+
+  const [mongoSecret] = await client.accessSecretVersion({
+    name: `projects/${projectId}/secrets/mongodb-uri/versions/latest`,
+  });
+  let responsePayload = mongoSecret.payload.data.toString();
+  process.env.mongodbUri = responsePayload;
+
+  const [sessionSecret] = await client.accessSecretVersion({
+    name: `projects/${projectId}/secrets/session-cookie-key/versions/latest`,
+  });
+  responsePayload = sessionSecret.payload.data.toString();
+  process.env.sessionKey = responsePayload;
+
+  const [googleClientSecret] = await client.accessSecretVersion({
+    name: `projects/${projectId}/secrets/google-client-secret/versions/latest`,
+  });
+  responsePayload = googleClientSecret.payload.data.toString();
+  process.env.clientSecret = responsePayload;
+
+  const [googleClientIdSecret] = await client.accessSecretVersion({
+    name: `projects/${projectId}/secrets/google-client-id/versions/latest`,
+  });
+  responsePayload = googleClientIdSecret.payload.data.toString();
+  process.env.clientId = responsePayload;
 }
