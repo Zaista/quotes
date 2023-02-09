@@ -37,22 +37,6 @@ app.use(
   })
 );
 
-// register regenerate & save after the cookieSession middleware initialization
-// TODO remove after https://github.com/jaredhanson/passport/issues/904 is fixed
-app.use(function(request, response, next) {
-    if (request.session && !request.session.regenerate) {
-        request.session.regenerate = (cb) => {
-            cb()
-        }
-    }
-    if (request.session && !request.session.save) {
-        request.session.save = (cb) => {
-            cb()
-        }
-    }
-    next()
-})
-
 const { MongoClient } = mongodb;
 const client = new MongoClient(process.env.mongodbUri, {
   useNewUrlParser: true,
@@ -115,7 +99,6 @@ app.use(passport.session());
 // Listen to the App Engine-specified port, or 8080 otherwise
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Environment variable: ${process.env.NODE_ENV}`);
   console.log(`Server app listening at http://localhost:${PORT}`);
 });
 
