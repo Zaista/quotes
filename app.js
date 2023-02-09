@@ -213,7 +213,10 @@ app.post('/api/login', passport.authenticate('local'), function (req, res) {
 app.get('/api/logout', async (req, res) => {
   if (req.user) {
     console.log("User '" + req.user.email + "' logged out.");
-    req.logout();
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
+    });
   }
   res.redirect('/');
 });
