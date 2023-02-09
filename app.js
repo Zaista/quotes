@@ -37,6 +37,22 @@ app.use(
   })
 );
 
+// register regenerate & save after the cookieSession middleware initialization
+// TODO remove after https://github.com/jaredhanson/passport/issues/904 is fixed
+app.use(function(request, response, next) {
+    if (request.session && !request.session.regenerate) {
+        request.session.regenerate = (cb) => {
+            cb()
+        }
+    }
+    if (request.session && !request.session.save) {
+        request.session.save = (cb) => {
+            cb()
+        }
+    }
+    next()
+})
+
 const { MongoClient } = mongodb;
 const client = new MongoClient(process.env.mongodbUri, {
   useNewUrlParser: true,
@@ -199,7 +215,7 @@ app.get(
 
 app.get(
   '/auth/google/callback',
-  passport.authenticate('google'),
+  passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
   (req, res) => {
     console.log("User '" + req.user.email + "' logged in.");
     res.redirect('/');
