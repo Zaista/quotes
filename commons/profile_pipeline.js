@@ -4,7 +4,7 @@ async function get(client, user_id) {
   // get only user document
   const stage_1 = { $match: { _id: user_id } };
 
-  // unwind solved quotes as seperate documents
+  // unwind solved quotes as separate documents
   const stage_2 = { $unwind: { path: '$solved' } };
 
   // lookup quote data from all_quotes view, join by link
@@ -81,8 +81,7 @@ async function get(client, user_id) {
     stage_8,
     stage_9
   );
-  const result = await db.aggregate_users(client, pipeline);
-  return result;
+  return await db.aggregate_users(client, pipeline);
 }
 
 export default { get };

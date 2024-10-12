@@ -1,7 +1,19 @@
 steps:
-  - name: node:18.13.0
+  - name: node
     entrypoint: npm
     args: ["install"]
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['app', 'deploy']
+    args:
+      - '-c'
+      - |
+        sed -i "s|##_MONGOURI##|${_MONGOURI}|" app.yaml
+        sed -i "s|##_SESSIONKEY##|${_SESSIONKEY}|" app.yaml
+        sed -i "s|##_CLIENTID##|${_CLIENTID}|" app.yaml
+        sed -i "s|##_CLIENTSECRET##|${_CLIENTSECRET}|" app.yaml
+        gcloud app deploy
 timeout: 1800s
+substitutions:
+  _MONGOURI: ${_MONGOURI}
+  _SESSIONKEY: ${_SESSIONKEY}
+  _CLIENTID: ${_CLIENTID}
+  _CLIENTSECRET: ${_CLIENTSECRET}

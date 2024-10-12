@@ -3,7 +3,13 @@ version: '3.8'
 services:
   mongo:
     image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: quotes
     volumes:
       - ./private/db/data:/data/db
+      - ./mongodb_views.js:/docker-entrypoint-initdb.d/init.js:ro
     ports:
-      - 27017:27017
+      - '27017:27017'

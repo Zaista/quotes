@@ -1,35 +1,31 @@
 {
   "name": "quotes",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Game of Quotes source code",
   "main": "app.js",
   "type": "module",
   "scripts": {
     "start": "npm run start-npm",
     "start-npm": "node app.js",
-    "ci": "cy2 run --record --key XXX --parallel --ci-build-id $BUILD --config baseUrl=https://quotes.jovanilic.com",
-    "open": "cypress open",
-    "run": "cypress run --spec cypress/integration/quotes.spec.js"
+    "open": "cypress2 open",
+    "run": "cypress2 run"
   },
   "author": "Zaista",
   "license": "MIT",
   "dependencies": {
-    "@google-cloud/secret-manager": "^4.2.0",
-    "bcrypt": "^5.0.1",
-    "cookie-parser": "^1.4.5",
-    "cookie-session": "^1.4.0",
-    "dateformat": "^4.5.1",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "mongodb": "^3.6.9",
-    "passport": "^0.5.2",
+    "bcrypt": "^5.1.1",
+    "cookie-session": "^2.1.0",
+    "dateformat": "^5.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongodb": "^6.9.0",
+    "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "cy2": "1.2.1",
-    "cypress": "9.0.0",
-    "cypress-mongodb": "^1.2.0"
+    "cypress": "13.15.0",
+    "cypress-mongodb": "^6.2.1"
   }
 }

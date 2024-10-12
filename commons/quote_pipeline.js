@@ -18,8 +18,7 @@ async function get(client, user_id, quote_link) {
     // TODO filter out solved quotes
   }
 
-  const result = await db.aggregate_quotes(client, pipeline);
-  return result;
+  return await db.aggregate_quotes(client, pipeline);
 }
 
 async function solve(client, user_id, quote_link) {
@@ -27,15 +26,13 @@ async function solve(client, user_id, quote_link) {
   const pipeline = {
     $push: { solved: { date: new Date(Date.now()), link: quote_link } },
   };
-  const result = await db.update(client, query, pipeline);
-  return result;
+  return await db.update(client, query, pipeline);
 }
 
 async function submit(client, user_id, quote) {
   const query = { _id: user_id };
   const pipeline = { $push: { uploaded: quote } };
-  const result = await db.update(client, query, pipeline);
-  return result;
+  return await db.update(client, query, pipeline);
 }
 
 export default { get, solve, submit };

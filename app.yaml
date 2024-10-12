@@ -1,2 +1,8 @@
-runtime: nodejs18
+runtime: nodejs20
 service: quotes
+
+env_variables:
+  mongodbUri: ##_MONGODBURI##
+  sessionKey: ##_SESSIONKEY##
+  clientId: ##_CLIENTID##
+  clientSecret: ##_CLIENTSECRET##
