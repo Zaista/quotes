@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "open": "cypress2 open",
-    "run": "cypress2 run"
+    "open": "cypress open --e2e --browser chrome",
+    "run": "cypress run"
   },
   "author": "Zaista",
   "license": "MIT",
