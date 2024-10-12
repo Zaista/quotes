@@ -1,24 +1,29 @@
-// reference to create views in mongodb atlas
+// create views in mongodb
+print('Creating required views');
+db = db.getSiblingDB('quotes');
 
-async function create_all_quotes_view(client) {
-  // project only 'uploaded' field from the db
-  const stage_1 = { $project: { uploaded: 1 } };
-
-  // simple unwind of uploaded quotes array to seperate quote documents
-  const stage_2 = { $unwind: { path: '$uploaded' } };
-
-  // add detached '_id' field inside the quotes object
-  const stage_3 = { $addFields: { 'uploaded._id': '$_id' } };
-
-  // replace 'uploaded' root with only quote objects
-  const stage_4 = { $replaceRoot: { newRoot: '$uploaded' } };
-
-  const pipeline = [];
-  pipeline.push(stage_1, stage_2, stage_3, stage_4);
-  const query_result = await client
-    .db('quotes')
-    .createCollection('all_quotes', { viewOn: 'users', pipeline: pipeline });
-  console.log(query_result);
+if (!db.getCollectionNames().includes('users')) {
+  print('Creating users collection');
+  db.createCollection('users');
 }
 
-export default { create_all_quotes_view };
+if (!db.getCollectionNames().includes('all_quotes')) {
+  print('Creating users view');
+  db.createView(
+    "all_quotes",
+    "users",
+    [
+      // project only 'uploaded' field from the db
+      { $project: { uploaded: 1 } },
+      // simple unwind of uploaded quotes array to separate quote documents
+      { $unwind: { path: '$uploaded' } },
+      // add detached '_id' field inside the quotes object
+      { $addFields: { 'uploaded._id': '$_id' } },
+      // replace 'uploaded' root with only quote objects
+      { $replaceRoot: { newRoot: '$uploaded' } }
+    ]
+  );
+  print('Created view successfully');
+} else {
+  print('View already exists.');
+}

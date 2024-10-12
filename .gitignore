@@ -1,5 +1,5 @@
 .idea/
 node_modules/
 private/
-cypress/videos
-cypress/screenshots
+cypress2/videos
+cypress2/screenshots

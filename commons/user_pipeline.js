@@ -20,8 +20,7 @@ async function get(client, user) {
 }
 
 async function insert(client, user) {
-  const result = await db.insert(client, user);
-  return result;
+  return await db.insert(client, user);
 }
 
 export default { get, insert };

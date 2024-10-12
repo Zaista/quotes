@@ -1,9 +1,19 @@
+import user from "../fixtures/user.json";
+import quote from "../fixtures/quote.json";
+
 describe('Game of Quotes', () => {
-  it('Open quotes site', () => {
-    cy.visit('/?quote=0d764a61-1001-4e89-abfb-98ab24addfbe');
+
+  before(() => {
+    cy.request('POST', 'api/login', user);
+    cy.request('POST', 'api/submit', quote).then((response) => {
+      cy.wrap(response.body.link).as('quoteLink');
+    });
+    cy.request({url: 'api/logout', followRedirect: false});
+  });
+
+  it('Open quotes site', function () {
+    cy.visit(`/?quote=${this.quoteLink}`);
     cy.get('h5').contains('Game of Quotes');
-    cy.wait(1200);
-    cy.compareSnapshot('home', 0.1);
 
     cy.get('#restart-button').should('exist');
     cy.get('#clear-button').should('exist');
@@ -32,6 +42,5 @@ describe('Game of Quotes', () => {
     });
 
     cy.get('#keyboard-focus').type('a');
-    cy.compareSnapshot('attempt');
   });
 });

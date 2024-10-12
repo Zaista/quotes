@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import {SecretManagerServiceClient} from '@google-cloud/secret-manager';
 import quote_pipeline from './commons/quote_pipeline.js';
 import profile_pipeline from './commons/profile_pipeline.js';
 import user_pipeline from './commons/user_pipeline.js';
@@ -8,7 +7,6 @@ import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import GoogleStrategy from 'passport-google-oauth20';
 import session from 'cookie-session';
-import cookieParser from 'cookie-parser';
 import { v4 as uuidv4 } from 'uuid';
 import mongodb from 'mongodb';
 import dateFormat from 'dateformat';
@@ -17,16 +15,13 @@ import bcrypt from 'bcrypt';
 // TODO nodemailer, less, eslint, morgan,
 
 const app = express();
-app.use(express.static('public'));
+app.use(express.static('./public', { redirect: false }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(cookieParser());
+app.use(express.urlencoded({ extended: true, limit: '20mb' })); // for parsing application/x-www-form-urlencoded
 app.enable('trust proxy');
 
-dotenv.config();
-
-if (process.env.NODE_ENV === 'production') {
-  await setupEnv();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
 }
 
 app.use(
@@ -37,12 +32,24 @@ app.use(
   })
 );
 
-const { MongoClient } = mongodb;
-const client = new MongoClient(process.env.mongodbUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// register regenerate & save until passport v0.6 is fixed
+app.use(function (request, response, next) {
+  if (request.session && !request.session.regenerate) {
+    request.session.regenerate = (cb) => {
+      cb();
+    };
+  }
+  if (request.session && !request.session.save) {
+    request.session.save = (cb) => {
+      cb();
+    };
+  }
+  next();
 });
-client.connect();
+
+const { MongoClient } = mongodb;
+const client = new MongoClient(process.env.mongodbUri);
+await client.connect();
 
 passport.use(
   new GoogleStrategy(
@@ -113,7 +120,7 @@ app.get('/api/quote', async (req, res) => {
     req.query.quote
   );
 
-  if (!quote) return res.send({ error: 'Database connection error.' });
+  if (!quote) return res.send({ error: 'Invalid quote link' });
 
   console.log('Requested quote id: ' + quote.link);
   return res.send(quote);
@@ -149,17 +156,19 @@ app.post('/api/submit', async (req, res) => {
     author: req.body.author,
     link: uuidv4(),
   };
-  let user_id = null; // TODO check this path
+  let user_id;
   if (req.user) {
     user_id = new mongodb.ObjectId(req.user._id);
+  } else {
+    return res.send({ error: 'User not logged in'})
   }
   const result = await quote_pipeline.submit(client, user_id, quote);
-  if (result) {
-    console.log('Quote submited');
-    res.send({ result: 'success' });
+  if (result.acknowledged) {
+    console.log('Quote submitted');
+    return res.send({ result: 'success', link: quote.link });
   } else {
     console.log('Error submitting quote');
-    res.send({ error: 'something went wrong' });
+    return res.send({ error: 'something went wrong' });
   }
 });
 
@@ -214,41 +223,13 @@ app.get('/api/logout', async (req, res) => {
     console.log("User '" + req.user.email + "' logged out.");
     req.logout(function(err) {
       if (err) { return next(err); }
-      res.redirect('/');
+      return res.redirect('/');
     });
+  } else {
+    return res.redirect('/');
   }
-  res.redirect('/');
 });
 
 app.get('/api/version', (req, res) => {
   res.send({ version: `${process.env.npm_package_version}` });
 });
-
-async function setupEnv() {
-  let projectId = 'deductive-span-313911';
-  const client = new SecretManagerServiceClient();
-
-  const [mongoSecret] = await client.accessSecretVersion({
-    name: `projects/${projectId}/secrets/mongodb-uri/versions/latest`,
-  });
-  let responsePayload = mongoSecret.payload.data.toString();
-  process.env.mongodbUri = responsePayload;
-
-  const [sessionSecret] = await client.accessSecretVersion({
-    name: `projects/${projectId}/secrets/session-cookie-key/versions/latest`,
-  });
-  responsePayload = sessionSecret.payload.data.toString();
-  process.env.sessionKey = responsePayload;
-
-  const [googleClientSecret] = await client.accessSecretVersion({
-    name: `projects/${projectId}/secrets/google-client-secret/versions/latest`,
-  });
-  responsePayload = googleClientSecret.payload.data.toString();
-  process.env.clientSecret = responsePayload;
-
-  const [googleClientIdSecret] = await client.accessSecretVersion({
-    name: `projects/${projectId}/secrets/google-client-id/versions/latest`,
-  });
-  responsePayload = googleClientIdSecret.payload.data.toString();
-  process.env.clientId = responsePayload;
-}
