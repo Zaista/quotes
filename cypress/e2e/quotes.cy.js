@@ -4,7 +4,7 @@ import quote from "../fixtures/quote.json";
 describe('Game of Quotes', () => {
 
   before(() => {
-    cy.request('POST', 'api/login', user);
+    cy.request('POST', 'api/register', user);
     cy.request('POST', 'api/submit', quote).then((response) => {
       cy.wrap(response.body.link).as('quoteLink');
     });

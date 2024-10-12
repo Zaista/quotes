@@ -1,6 +1,10 @@
 import quote from '../fixtures/quote.json'
 import user from '../fixtures/user.json'
 
+before(() => {
+  cy.request('POST', 'api/register', user);
+});
+
 describe('Login tests', () => {
   it('Login', () => {
     cy.fixture('user.json').then((user) => {
