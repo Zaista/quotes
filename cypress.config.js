@@ -2,7 +2,7 @@ import { defineConfig } from "cypress";
 import { configurePlugin } from 'cypress-mongodb';
 
 export default defineConfig({
-  projectId: "gp99p1",
+  projectId: "tfo3ms",
   e2e: {
     baseUrl: 'http://localhost:8080',
     env: {
