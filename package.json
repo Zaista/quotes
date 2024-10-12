@@ -12,6 +12,7 @@
   "author": "Zaista",
   "license": "MIT",
   "dependencies": {
+    "@faker-js/faker": "^9.0.3",
     "bcrypt": "^5.1.1",
     "cookie-session": "^2.1.0",
     "dateformat": "^5.0.3",

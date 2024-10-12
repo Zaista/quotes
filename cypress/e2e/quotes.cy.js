@@ -1,9 +1,13 @@
-import user from "../fixtures/user.json";
+import { faker } from '@faker-js/faker';
 import quote from "../fixtures/quote.json";
 
 describe('Game of Quotes', () => {
 
   before(() => {
+    const user = {
+      email: faker.internet.email(),
+      password: 'test'
+    }
     cy.request('POST', 'api/register', user);
     cy.request('POST', 'api/submit', quote).then((response) => {
       cy.wrap(response.body.link).as('quoteLink');

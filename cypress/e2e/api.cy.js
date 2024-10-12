@@ -1,5 +1,10 @@
 import quote from '../fixtures/quote.json'
-import user from '../fixtures/user.json'
+import {faker} from "@faker-js/faker";
+
+const user = {
+  email: faker.internet.email(),
+  password: 'test'
+}
 
 before(() => {
   cy.request('POST', 'api/register', user);
@@ -7,10 +12,8 @@ before(() => {
 
 describe('Login tests', () => {
   it('Login', () => {
-    cy.fixture('user.json').then((user) => {
-      cy.request('POST', 'api/login', user).should((response) => {
-        expect(response.body).to.have.property('login', 'success');
-      });
+    cy.request('POST', 'api/login', user).should((response) => {
+      expect(response.body).to.have.property('login', 'success');
     });
   });
 
@@ -23,14 +26,12 @@ describe('Login tests', () => {
   });
 
   it('Logout - logged in', () => {
-    cy.fixture('user.json').then((user) => {
-      cy.request('POST', 'api/login', user);
-      cy.request({url: 'api/logout', followRedirect: false}).should(
-        (response) => {
-          expect(response.status).to.eq(302);
-        }
-      );
-    });
+    cy.request('POST', 'api/login', user);
+    cy.request({url: 'api/logout', followRedirect: false}).should(
+      (response) => {
+        expect(response.status).to.eq(302);
+      }
+    );
   });
 });
 
@@ -85,7 +86,7 @@ describe('Profile tests', () => {
   });
 
   it('Register - email in use', () => {
-    cy.request('POST', 'api/register', user).should((response) => {
+    cy.request({method: 'POST', url: 'api/register', body: user, failOnStatusCode: false}).should((response) => {
       expect(response.body).to.have.property(
         'error',
         'Email already in use.'
