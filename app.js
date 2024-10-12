@@ -97,7 +97,11 @@ passport.deserializeUser(async function (_id, done) {
   const user = await user_pipeline.get(client, {
     _id: new mongodb.ObjectId(_id),
   });
-  done(null, user);
+  if (user === undefined) {
+    done(null, null, { error: 'User not found' });
+  } else {
+    done(null, user);
+  }
 });
 
 app.use(passport.initialize());
@@ -119,6 +123,7 @@ app.get('/api/quote', async (req, res) => {
     req.user?._id,
     req.query.quote
   );
+  console.log(quote)
 
   if (!quote) return res.send({ error: 'Invalid quote link' });
 
@@ -175,17 +180,18 @@ app.post('/api/submit', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   let user = await user_pipeline.get(client, { email: req.body.email });
   if (user) {
-    res.send({ error: 'Email already in use.' });
+    return res.status(409).send({ error: 'Email already in use.' });
   } else {
     const hash = await bcrypt.hash(req.body.password, 10);
     user = { email: req.body.email, password: hash, solved: [], uploaded: [] };
     const new_id = await user_pipeline.insert(client, user);
     console.log('New user created: ' + user.email + ' with id: ' + new_id);
     req.login(user, function (err) {
+      console.log(user)
       if (err) {
         return next(err);
       }
-      res.send({ success: 'Email registered.' });
+      return res.send({ success: 'Email registered.' });
     });
   }
 });
