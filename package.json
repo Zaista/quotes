@@ -5,8 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "npm run start-npm",
-    "start-npm": "node app.js",
+    "start": "node app.js",
     "open": "cypress2 open",
     "run": "cypress2 run"
   },

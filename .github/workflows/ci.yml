@@ -6,6 +6,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Start services
+        uses: hoverkraft-tech/compose-action@v2.0.1
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
