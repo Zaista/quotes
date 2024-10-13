@@ -1,3 +1,7 @@
+import {getLogger} from "./logger.js";
+
+const log = getLogger('quotes');
+
 async function aggregate_users(client, pipeline) {
   try {
     return await client
@@ -6,7 +10,7 @@ async function aggregate_users(client, pipeline) {
       .aggregate(pipeline)
       .toArray();
   } catch (err) {
-    console.log('ERROR: ' + err.stack);
+    log.error('aggregate_users', err);
     return null;
   }
 }
@@ -20,7 +24,7 @@ async function aggregate_quotes(client, pipeline) {
       .toArray();
     return result[0];
   } catch (err) {
-    console.log('ERROR: ' + err.stack);
+    log.error('aggregate_quotes', err);
     return null;
   }
 }
@@ -33,7 +37,7 @@ async function insert(client, document) {
       .insertOne(document);
     return query_result.insertedId;
   } catch (err) {
-    console.log('ERROR: ' + err.stack);
+    log.error('insert', err);
     return null;
   }
 }
@@ -45,7 +49,7 @@ async function update(client, query, pipeline) {
       .collection('users')
       .updateOne(query, pipeline);
   } catch (err) {
-    console.log('ERROR: ' + err.stack);
+    log.error('update', err);
     return null;
   }
 }
