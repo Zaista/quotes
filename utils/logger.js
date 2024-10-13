@@ -9,6 +9,7 @@ log4js.configure({
     app: { appenders: ['out'], level: 'info' },
     session: { appenders: ['out'], level: 'info' },
     quotes: { appenders: ['out'], level: 'info' },
+    database: { appenders: ['out'], level: 'info' },
   },
 });
 
