@@ -1,6 +1,6 @@
 import db from './db.js';
 
-async function get(client, user_id, quote_link) {
+async function get(user_id, quote_link) {
   let pipeline = [];
 
   if (quote_link) {
@@ -15,24 +15,25 @@ async function get(client, user_id, quote_link) {
       pipeline.unshift(stage_0);
     }
 
-    // TODO filter out solved quotes
+    // TODO add more functions that will, ie, filter out solved quotes
   }
 
-  return await db.aggregate_quotes(client, pipeline);
+  return await db.aggregate_quotes(pipeline);
 }
 
-async function solve(client, user_id, quote_link) {
+async function solve(user_id, quote_link) {
   const query = { _id: user_id };
   const pipeline = {
     $push: { solved: { date: new Date(Date.now()), link: quote_link } },
   };
-  return await db.update(client, query, pipeline);
+  // TODO check if quote was already solved before
+  return await db.update(query, pipeline);
 }
 
-async function submit(client, user_id, quote) {
+async function submit(user_id, quote) {
   const query = { _id: user_id };
   const pipeline = { $push: { uploaded: quote } };
-  return await db.update(client, query, pipeline);
+  return await db.update(query, pipeline);
 }
 
 export default { get, solve, submit };

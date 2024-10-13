@@ -4,13 +4,12 @@ import mongodb from "mongodb";
 import dateFormat from 'dateformat';
 import {getLogger} from "../utils/logger.js";
 
-export function configureQuotesRouter(quotesRouter, client) {
+export function configureQuotesRouter(quotesRouter) {
 
   const log = getLogger('quotes');
 
   quotesRouter.get('/api/quote', async (req, res) => {
     const quote = await quote_pipeline.get(
-      client,
       req.user?._id,
       req.query.quote
     );
@@ -22,15 +21,19 @@ export function configureQuotesRouter(quotesRouter, client) {
   });
 
   quotesRouter.get('/api/solution', async (req, res) => {
-    if (!req.user) return res.status(401).send({ error: 'Unauthorized.' });
+    if (!req.user) return res.status(401).send({ error: 'Unauthorized' });
+    if (!req.query.quote) return res.status(400).send({ error: 'Quote link mandatory' });
+    const quote = await quote_pipeline.get(null, req.query.quote);
+    if (quote === undefined) return res.status(400).send({ error: 'Unknown quote link' });
     const result = await quote_pipeline.solve(
-      client,
       req.user._id,
       req.query.quote
     );
-    // TODO add check for valid quote_link
-    if (result) return res.send({ success: 'Quote solved.' });
-    else return res.send({ error: 'Something went wrong.' });
+    if (result) return res.send({ success: 'Quote solved' });
+    else {
+      log.error('Error verifying solution', result)
+      return res.send({ error: 'Something went wrong' });
+    }
   });
 
   quotesRouter.post('/api/submit', async (req, res) => {
@@ -47,13 +50,13 @@ export function configureQuotesRouter(quotesRouter, client) {
     } else {
       return res.send({ error: 'User not logged in'})
     }
-    const result = await quote_pipeline.submit(client, user_id, quote);
+    const result = await quote_pipeline.submit(user_id, quote);
     if (result.acknowledged) {
       log.info('Quote submitted', quote);
       return res.send({ result: 'success', link: quote.link });
     } else {
-      log.error('Error submitting quote');
-      return res.send({ error: 'something went wrong' });
+      log.error('Error submitting quote', result);
+      return res.send({ error: 'Something went wrong' });
     }
   });
 }

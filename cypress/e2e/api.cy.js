@@ -45,7 +45,7 @@ describe('Quote tests', () => {
     cy.request({url: 'api/logout', followRedirect: false});
   });
 
-  it('Quote', () => {
+  it('Quote - get any', () => {
     cy.request('GET', 'api/quote').should((response) => {
       expect(response.body).to.have.property('date');
       expect(response.body).to.have.property('quote');
@@ -55,7 +55,7 @@ describe('Quote tests', () => {
     });
   });
 
-  it('Quote - specific', function () {
+  it('Quote - get specific', function () {
     cy.request(
       'GET',
       `api/quote?quote=${this.quoteLink}`
@@ -65,6 +65,66 @@ describe('Quote tests', () => {
       expect(response.body).to.have.property('author', quote.author);
       expect(response.body).to.have.property('link', this.quoteLink);
       expect(response.body).to.have.property('_id');
+    });
+  });
+
+  it('Quote - solve, logged in out', function () {
+    cy.request({
+        method: 'GET',
+        url: `api/solution?quote=${this.quoteLink}`,
+        failOnStatusCode: false
+      }
+    ).then((response) => {
+      expect(response.body).to.have.property('error', 'Unauthorized');
+    });
+  });
+
+  it('Quote - solve, logged in, no quote link', function () {
+    cy.request('POST', 'api/login', user);
+    cy.request({
+        method: 'GET',
+        url: 'api/solution',
+        failOnStatusCode: false
+      }
+    ).then((response) => {
+      expect(response.body).to.have.property('error', 'Quote link mandatory');
+    });
+  });
+
+  it('Quote - solve, logged in, bad quote link', function () {
+    cy.request('POST', 'api/login', user);
+    cy.request({
+        method: 'GET',
+        url: 'api/solution?quote=12345',
+        failOnStatusCode: false
+      }
+    ).then((response) => {
+      expect(response.body).to.have.property('error', 'Unknown quote link');
+    });
+  });
+
+  it('Quote - solve, logged in, good quote link', function () {
+    cy.request('POST', 'api/login', user);
+    cy.request({
+        method: 'GET',
+        url: `api/solution?quote=${this.quoteLink}`
+      }
+    ).then((response) => {
+      expect(response.body).to.have.property('success', 'Quote solved');
+    });
+  });
+
+  it('Quote - submit, logged out', function () {
+    cy.request('POST', 'api/submit', quote).then((response) => {
+      expect(response.body).to.have.property('error', 'User not logged in');
+    });
+  });
+
+  it('Quote - submit, logged in', function () {
+    cy.request('POST', 'api/login', user);
+    cy.request('POST', 'api/submit', quote).then((response) => {
+      expect(response.body).to.have.property('result', 'success');
+      expect(response.body).to.have.property('link');
     });
   });
 });

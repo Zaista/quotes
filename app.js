@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import session from 'cookie-session';
-import mongodb from 'mongodb';
 import {getLogger} from "./utils/logger.js";
 import {configureSessionRouter} from "./routers/sessionRouter.js";
 import {configureQuotesRouter} from "./routers/quotesRouter.js";
@@ -11,9 +10,9 @@ import {configureProfileRouter} from "./routers/profileRouter.js";
 
 const log = getLogger('app');
 const app = express();
-app.use(express.static('./public', { redirect: false }));
+app.use(express.static('./public', {redirect: false}));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: '20mb' })); // for parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({extended: true, limit: '20mb'})); // for parsing application/x-www-form-urlencoded
 app.enable('trust proxy');
 
 if (process.env.NODE_ENV !== 'production') {
@@ -29,18 +28,14 @@ app.use(
   })
 );
 
-const { MongoClient } = mongodb;
-const client = new MongoClient(process.env.mongodbUri);
-await client.connect();
-
 const sessionRouter = express.Router();
-configureSessionRouter(sessionRouter, client);
+configureSessionRouter(sessionRouter);
 
 const quotesRouter = express.Router();
-configureQuotesRouter(quotesRouter, client);
+configureQuotesRouter(quotesRouter);
 
 const profileRouter = express.Router();
-configureProfileRouter(profileRouter, client);
+configureProfileRouter(profileRouter);
 
 app.use('/', [sessionRouter, quotesRouter, profileRouter]);
 
@@ -51,9 +46,9 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile('public/quotes.html', { root: '.' });
+  res.sendFile('public/quotes.html', {root: '.'});
 });
 
 app.get('/api/version', (req, res) => {
-  res.send({ version: `${process.env.npm_package_version}` });
+  res.send({version: `${process.env.npm_package_version}`});
 });
