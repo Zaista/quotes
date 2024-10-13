@@ -1,6 +1,6 @@
 import db from './db.js';
 
-async function get(client, user) {
+async function get(user) {
   let pipeline = [];
 
   let stage_1;
@@ -15,12 +15,12 @@ async function get(client, user) {
   const stage_2 = { $project: { username: 1, email: 1, password: 1 } };
 
   pipeline.push(stage_1, stage_2);
-  const result = await db.aggregate_users(client, pipeline);
+  const result = await db.aggregate_users(pipeline);
   return result[0];
 }
 
-async function insert(client, user) {
-  return await db.insert(client, user);
+async function insert(user) {
+  return await db.insert(user);
 }
 
 export default { get, insert };

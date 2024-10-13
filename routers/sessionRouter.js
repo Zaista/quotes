@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import mongodb from "mongodb";
 import {getLogger} from "../utils/logger.js";
 
-export function configureSessionRouter(sessionRouter, client) {
+export function configureSessionRouter(sessionRouter) {
 
   const log = getLogger('session');
 
@@ -20,12 +20,12 @@ export function configureSessionRouter(sessionRouter, client) {
       },
       async (accessToken, refreshToken, profile, done) => {
         const user = { email: profile.emails[0].value, solved: [], uploaded: [] };
-        let db_user = await user_pipeline.get(client, user);
+        let db_user = await user_pipeline.get(user);
         if (db_user) {
           log.info('User already known: ' + db_user.email);
           done(null, db_user);
         } else {
-          const new_id = await user_pipeline.insert(client, user);
+          const new_id = await user_pipeline.insert(user);
           log.info('New google user registered: ' + user.email + ' with id: ' + new_id);
           done(null, user);
         }
@@ -39,7 +39,7 @@ export function configureSessionRouter(sessionRouter, client) {
       password,
       done
     ) {
-      let user = await user_pipeline.get(client, { email: email });
+      let user = await user_pipeline.get({ email: email });
       if (user) {
         const correctPassword = await bcrypt.compare(password, user.password);
         if (correctPassword) return done(null, user);
@@ -53,7 +53,7 @@ export function configureSessionRouter(sessionRouter, client) {
   });
 
   passport.deserializeUser(async function (_id, done) {
-    const user = await user_pipeline.get(client, {
+    const user = await user_pipeline.get({
       _id: new mongodb.ObjectId(_id),
     });
     if (user === undefined) {
@@ -82,13 +82,13 @@ export function configureSessionRouter(sessionRouter, client) {
   });
 
   sessionRouter.post('/api/register', async (req, res) => {
-    let user = await user_pipeline.get(client, { email: req.body.email });
+    let user = await user_pipeline.get({ email: req.body.email });
     if (user) {
       return res.status(409).send({ error: 'Email already in use.' });
     } else {
       const hash = await bcrypt.hash(req.body.password, 10);
       user = { email: req.body.email, password: hash, solved: [], uploaded: [] };
-      const new_id = await user_pipeline.insert(client, user);
+      const new_id = await user_pipeline.insert(user);
       log.info('New user registered: ' + user.email + ' with id: ' + new_id);
       req.login(user, function (err) {
         if (err) {

@@ -1,6 +1,6 @@
 import profile_pipeline from "../utils/profile_pipeline.js";
 
-export function configureProfileRouter(profileRouter, client) {
+export function configureProfileRouter(profileRouter) {
 
   profileRouter.get('/profile', (req, res) => {
     res.sendFile('public/profile.html', { root: '.' });
@@ -8,7 +8,7 @@ export function configureProfileRouter(profileRouter, client) {
 
   profileRouter.get('/api/profile', async (req, res) => {
     if (!req.user) return res.send({ error: 'Not logged in.' });
-    const result = await profile_pipeline.get(client, req.user._id);
+    const result = await profile_pipeline.get(req.user._id);
     res.send(result);
   });
 }

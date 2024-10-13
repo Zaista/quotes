@@ -4,7 +4,7 @@
 
 'use strict';
 
-var quote,
+let quote,
   quoteId,
   author,
   alphabet = [
@@ -38,13 +38,11 @@ var quote,
   ],
   activeLetter = 0,
   count,
-  session,
   spinner,
   gameEnded = false,
   isMobile = window.matchMedia('only screen and (max-width: 576px)'),
   urlParams = new URLSearchParams(window.location.search),
   quote_endpoint = 'api/quote',
-  google_endpoint = 'auth/google',
   status_endpoint = 'api/status',
   logout_endpoint = 'api/logout',
   login_endpoint = 'api/login',
@@ -120,9 +118,9 @@ function getQuote(url) {
         count = quote.replace(/[^a-z]/gi, '').length;
 
         // code below loops through quote and writes down the underscored sentence
-        for (var i = 0; i < quote.length; i++) {
+        for (let i = 0; i < quote.length; i++) {
           // get the character that is paired with the current letter in quote
-          var chars = quote.charAt(i).toLowerCase(),
+          let chars = quote.charAt(i).toLowerCase(),
             // get the classIndex based on letter position in alphabet, this will ensure that all same letters have the same class
             classIndex = alphabet.indexOf(chars);
           // if it is a letter
@@ -130,8 +128,8 @@ function getQuote(url) {
             // append underscores for every letter
             $('#solution').append(
               '<span class="underscores" name="letter' +
-                classIndex +
-                '">_</span>'
+              classIndex +
+              '">_</span>'
             );
           }
           // if it is not a letter
@@ -162,7 +160,7 @@ function getQuote(url) {
  *   JQuey events and click handlers
  */
 $(document).ready(function () {
-  // align rigth all dropdowns if on mobile
+  // align right all dropdowns if on mobile
   if (isMobile.matches) {
     $('.dropdown-menu').addClass('dropdown-menu-right');
   }
@@ -311,8 +309,8 @@ $(document).ready(function () {
   });
 
   /****************\
-     * QUOTE UPLOAD *
-    \****************/
+   * QUOTE UPLOAD *
+   \****************/
 
   $('#quote-submit').submit(function () {
     // Validate a quote
@@ -351,8 +349,8 @@ $(document).ready(function () {
                 'donate-quote',
                 'warning',
                 'Quote already exists. Use this <a href="' +
-                  newQuoteURL +
-                  '" class="alert-link">link</a> to play & share it.',
+                newQuoteURL +
+                '" class="alert-link">link</a> to play & share it.',
                 true
               );
             } else {
@@ -360,8 +358,8 @@ $(document).ready(function () {
                 'donate-quote',
                 'success',
                 'Quote uploaded. Click <a href="' +
-                  newQuoteURL +
-                  '" class="alert-link">here</a> to open it.',
+                newQuoteURL +
+                '" class="alert-link">here</a> to open it.',
                 true
               );
             }
@@ -375,8 +373,8 @@ $(document).ready(function () {
   });
 
   /*************\
-     * USER FORM *
-    \*************/
+   * USER FORM *
+   \*************/
 
   $('#login-email').on('keypress', function (e) {
     if (e.which == 13) {
@@ -447,8 +445,8 @@ $(document).ready(function () {
   });
 
   /***************\
-     * DONATE FORM *
-    \***************/
+   * DONATE FORM *
+   \***************/
 
   $('#donate').click(function () {
     var amount = $('#donate-amount option:selected').val();
@@ -577,7 +575,7 @@ function checkEnd(id) {
     $.get(solution_endpoint + '?quote=' + quoteId, function (response) {
       if (response.success) {
         alertMessage = response.success;
-        // if (response == "success" && data == "User soulution confirmed") {
+        // if (response == "success" && data == "User solution confirmed") {
         //     alertMessage = "Congratulations! Quote added to your timeline.";
         // } else if (status == "success" && data == "Quote already solved") {
         //     alertMessage = "Congratulations! You solved the quote.";
@@ -588,8 +586,8 @@ function checkEnd(id) {
     });
 
     // some nice animations for the end
-    $('#controls').fadeTo('medium', 0);
-    $('#solution-card').fadeTo('medium', 0);
+    $('#controls').fadeTo('slow', 0);
+    $('#solution-card').fadeTo('slow', 0);
 
     setTimeout(function () {
       $('#solution-card').remove();
